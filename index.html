@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>𝐌𝐀𝐈𝐋 𝐒𝐓𝐎𝐑𝐄 - Premium</title>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -13,436 +13,534 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8f8f8;
-            color: #333333;
+            background-color: #f3f4f6;
+            color: #1f2937;
             -webkit-user-select: none;
             -ms-user-select: none;
             user-select: none;
             -webkit-touch-callout: none;
             overflow-x: hidden;
         }
-        input, textarea, #mail-details-content, #mail-purchase-history .font-mono {
+        input, textarea, #mail-details-content, .selectable-text {
             -webkit-user-select: text;
             -ms-user-select: text;
             user-select: text;
             -webkit-touch-callout: default;
         }
+        
+        /* Modern Card & Glass Effects */
         .card-bg {
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .card-bg:active {
-            transform: scale(0.98);
+        .card-bg:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 123, 255, 0.1), 0 4px 6px -2px rgba(0, 123, 255, 0.05);
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.4);
         }
+        
+        /* Premium Buttons */
+        .btn-gradient {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.4);
+            transition: all 0.2s;
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px -1px rgba(37, 99, 235, 0.5);
+        }
+        .btn-gradient:active { transform: scale(0.98); }
+
+        .btn-outline-accent {
+            border: 1px solid #e5e7eb;
+            background: white;
+            color: #4b5563;
+            transition: all 0.2s;
+        }
+        .btn-outline-accent:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            background-color: #eff6ff;
+        }
+
         .text-accent-gradient {
-            background: linear-gradient(135deg, #007bff 0%, #00d2ff 100%);
+            background: linear-gradient(to right, #2563eb, #06b6d4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        .btn-gradient {
-            background-image: linear-gradient(135deg, #007bff, #0062cc);
-            color: #ffffff;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-            border: none;
-            transition: transform 0.1s, box-shadow 0.2s;
-        }
-        .btn-gradient:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2); }
+
+        /* Input Fields */
         .input-field {
             background-color: #f9fafb;
-            border: 1px solid #e5e7eb;
-            color: #1f2937;
+            border: 1px solid #d1d5db;
+            color: #111827;
             transition: all 0.2s ease;
         }
         .input-field:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
-            outline: none;
+            border-color: #2563eb;
             background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            outline: none;
         }
-        .main-page { display: none; padding-bottom: 80px; }
-        .main-page.active { display: block; animation: fadeIn 0.4s ease-out; }
-        .sub-page { display: none; padding-bottom: 80px; }
-        .sub-page.active { display: block; animation: slideIn 0.3s ease-out; }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        /* Page Transitions */
+        .sub-page { display: none; opacity: 0; transform: translateY(5px); transition: opacity 0.3s ease, transform 0.3s ease; }
+        .sub-page.active { display: block; opacity: 1; transform: translateY(0); }
+        .main-page { display: none; height: 100vh; flex-direction: column; }
+        .main-page.active { display: flex; }
 
+        /* Navigation */
         .bottom-nav {
-             background: rgba(255, 255, 255, 0.95);
+             border-top: 1px solid rgba(229, 231, 235, 0.8);
+             background-color: rgba(255, 255, 255, 0.95);
              backdrop-filter: blur(12px);
              -webkit-backdrop-filter: blur(12px);
-             border-top: 1px solid rgba(0,0,0,0.05);
-             position: fixed;
-             bottom: 0; left: 0; right: 0;
-             max-width: 672px; margin: 0 auto;
-             display: flex; justify-content: space-around;
-             padding: 10px 16px 20px 16px; /* Extra padding for modern phones */
+             position: fixed; bottom: 0; left: 0; right: 0;
+             max-width: 448px; margin: 0 auto;
+             display: flex; justify-content: space-around; align-items: center;
+             padding: 10px 16px 16px 16px;
              z-index: 50;
         }
-        .nav-link-premium { 
-            display: flex; flex-direction: column; align-items: center; gap: 4px; 
-            color: #9ca3af; font-size: 0.7rem; font-weight: 500; 
-            transition: color 0.2s ease; cursor: pointer; background: none; border: none; 
+        .nav-link-premium {
+             display: flex; flex-direction: column; align-items: center; gap: 4px;
+             color: #9ca3af; font-size: 0.7rem; font-weight: 500;
+             position: relative; cursor: pointer; background: none; border: none;
+             transition: color 0.3s;
         }
-        .nav-link-premium.active { color: #007bff; }
-        .nav-link-premium.active .icon { transform: scale(1.1); transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        
-        .center-home-link { 
-            position: relative; top: -25px; 
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            border-radius: 50%; width: 56px; height: 56px; 
-            display: flex; align-items: center; justify-content: center; 
-            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4); 
-            color: #fff !important;
-            border: 4px solid #f8f8f8; /* Blends with body bg */
-        }
+        .nav-link-premium.active { color: #2563eb; }
+        .nav-link-premium .icon { width: 24px; height: 24px; transition: transform 0.2s; }
+        .nav-link-premium.active .icon { transform: translateY(-2px); }
 
-        /* ---- NEW PREMIUM LOADER CSS ---- */
+        .center-home-link {
+            position: relative;
+            transform: translateY(-24px);
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            border-radius: 50%; width: 56px; height: 56px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+            border: 4px solid #f3f4f6;
+        }
+        .center-home-link .icon { color: white; width: 28px; height: 28px; }
+
+        /* Premium Loader */
         #loader {
-            position: fixed; inset: 0; z-index: 9999;
-            background: linear-gradient(to bottom, #0f172a, #1e293b);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; transition: opacity 0.6s ease;
+            background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 100%);
+            z-index: 150;
         }
-        .premium-spinner-box {
-            position: relative; width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;
+        .loader-logo {
+            filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.2));
+            animation: float 3s ease-in-out infinite;
         }
-        .premium-spinner-box::before {
-            content: ''; position: absolute; inset: 0;
-            border-radius: 50%; border: 2px solid transparent;
-            border-top-color: #3b82f6; border-right-color: #06b6d4;
-            animation: spin 1.5s linear infinite;
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
-        .premium-spinner-box::after {
-            content: ''; position: absolute; inset: 5px;
-            border-radius: 50%; border: 2px solid transparent;
-            border-top-color: #8b5cf6; border-left-color: #d946ef;
-            animation: spin 2s linear infinite reverse;
+        .progress-bar-container {
+            width: 200px; height: 4px; background: #bfdbfe; border-radius: 4px; overflow: hidden; margin-top: 20px;
         }
-        .glow-logo { animation: pulseGlow 2s ease-in-out infinite; }
-        @keyframes pulseGlow { 0%, 100% { opacity: 0.8; transform: scale(0.95); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); } 50% { opacity: 1; transform: scale(1); box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); } }
-        .loading-bar { width: 140px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-top: 20px; }
-        .loading-progress { width: 0%; height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4); animation: progressFill 2s ease-out forwards; }
-        @keyframes progressFill { 0% { width: 0%; } 100% { width: 100%; } }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ---- FULL PAGE NOTIFICATION & JOIN GATE ---- */
-        .full-screen-overlay {
-            position: fixed; inset: 0; z-index: 900;
-            background-color: #ffffff;
-            display: flex; flex-direction: column;
-            overflow-y: auto;
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-        .full-screen-overlay.active { transform: translateY(0); }
-        .modal-header-fixed {
-            position: sticky; top: 0; z-index: 10;
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(8px);
-            padding: 16px; border-bottom: 1px solid #f0f0f0;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        
-        #join-gate {
-            background-color: #ffffff;
-            z-index: 500;
-            display: none; /* JS will toggle flex */
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 2rem;
+        .progress-bar {
+            height: 100%; width: 0%; background: #2563eb;
+            transition: width 0.2s linear;
         }
 
-        /* Additional CSS from previous version */
-        .header { position: sticky; top: 0; z-index: 10; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); padding: 1rem; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .banner-wrapper { position: relative; width: 100%; padding-top: 50%; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); margin-bottom: 10px;}
+        /* Verification Screen */
+        #join-channel-overlay {
+            position: fixed; inset: 0; background: #fff; z-index: 100;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            padding: 2rem; text-align: center;
+        }
+
+        /* Banner & Slider */
+        .banner-wrapper { position: relative; padding-top: 50%; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
         .banner-inner { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1); }
         .slide { min-width: 100%; height: 100%; }
         .slide img { width: 100%; height: 100%; object-fit: cover; }
-        .mail-view-switcher button { padding: 8px; border-radius: 8px; flex: 1; transition: all 0.2s; font-size: 0.9rem; font-weight: 600; color: #6b7280; }
-        .mail-view-switcher button.active { background: #fff; color: #007bff; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
-        .mail-view-switcher { background: #e5e7eb; padding: 4px; border-radius: 10px; display: flex; gap: 4px; margin-bottom: 1rem; }
+        
+        .notification-badge {
+            position: absolute; top: 0px; right: 0px; background-color: #ef4444; color: white;
+            border-radius: 9999px; width: 10px; height: 10px; border: 2px solid white;
+        }
+
+        /* Sidebar */
+        #menu-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 80; opacity: 0; visibility: hidden; transition: 0.3s; backdrop-filter: blur(4px); }
+        #menu-overlay.open { opacity: 1; visibility: visible; }
+        #slide-out-menu {
+            position: fixed; top: 0; left: 0; bottom: 0; width: 280px; background: white;
+            z-index: 90; transform: translateX(-100%); transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column;
+        }
+        #slide-out-menu.open { transform: translateX(0); }
+        
+        /* Loading Spinner */
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid #e5e7eb; border-top-color: #2563eb;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(1turn); } }
+
     </style>
 </head>
-<body class="max-w-md mx-auto relative min-h-screen">
+<body class="max-w-md mx-auto text-gray-800 antialiased h-screen overflow-hidden relative">
 
-    <!-- === 1. NEW PREMIUM LOADER === -->
-    <div id="loader">
-        <div class="premium-spinner-box">
-            <div class="bg-blue-600 w-10 h-10 rounded-full flex items-center justify-center glow-logo shadow-lg">
-                 <svg xmlns="http://www.w3.org/2000/svg" class="text-white w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/><rect width="20" height="16" x="2" y="4" rx="2"/></svg>
-            </div>
+    <!-- Premium Loader -->
+    <div id="loader" class="fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="loader-logo mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         </div>
-        <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300 tracking-wider">MAIL STORE</h1>
-        <p class="text-gray-400 text-xs mt-2 font-mono">Premium Mail Service</p>
-        <div class="loading-bar"><div class="loading-progress"></div></div>
-        <p id="loader-status" class="text-gray-500 text-[10px] mt-4 opacity-70">Verifying session...</p>
-    </div>
-
-    <!-- === 2. JOIN CHANNEL GATE === -->
-    <div id="join-gate" class="fixed inset-0 w-full h-full">
-        <div class="bg-blue-50 w-24 h-24 rounded-full flex items-center justify-center mb-6">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-        </div>
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">Access Restricted</h2>
-        <p class="text-gray-600 text-sm mb-6 max-w-[80%] mx-auto leading-relaxed">
-            এই অ্যাপটি ব্যবহার করার জন্য আপনাকে আমাদের অফিসিয়াল টেলিগ্রাম চ্যানেলে জয়েন করতে হবে।
-        </p>
+        <h1 class="text-3xl font-extrabold text-accent-gradient tracking-tight">𝐌𝐀𝐈𝐋 𝐒𝐓𝐎𝐑𝐄</h1>
+        <p class="text-sm text-gray-400 mt-2 font-medium tracking-wide">PREMIUM ACCESS</p>
         
-        <div class="space-y-3 w-full max-w-[80%]">
-            <button onclick="window.Telegram.WebApp.openTelegramLink('https://t.me/EXPERTearn_team')" class="w-full btn-gradient p-3 rounded-xl flex items-center justify-center gap-2">
-                <i data-lucide="user-plus" class="w-5 h-5"></i>
-                <span>Join Official Channel</span>
-            </button>
-            <button onclick="verifyTelegramMembership(window.currentTgUserId, true)" class="w-full bg-gray-100 text-gray-700 font-semibold p-3 rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 border border-gray-200">
-                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                <span>Check Status Again</span>
-            </button>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="loader-progress"></div>
         </div>
-        <p id="gate-error-msg" class="text-red-500 text-xs mt-4 min-h-[20px]"></p>
+        <p id="loader-status" class="text-xs text-blue-500 mt-3 font-semibold">Loading App Data...</p>
     </div>
 
-    <!-- === APP CONTAINER === -->
-    <div id="app-container" class="min-h-screen flex flex-col main-page">
+    <!-- Verification Overlay (Join Channel) -->
+    <div id="join-channel-overlay" class="hidden">
+        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Access Required</h2>
+        <p class="text-gray-600 mb-8 text-sm px-4">আমাদের সেবা ব্যবহার করতে হলে অবশ্যই অফিসিয়াল টেলিগ্রাম চ্যানেলে জয়েন থাকতে হবে।</p>
+        
+        <a id="channel-link-btn" href="#" target="_blank" class="w-full bg-[#2AABEE] text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 mb-3 shadow-lg hover:bg-[#229ED9] transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.198 2.433a2.242 2.242 0 0 0-1.022.215l-8.609 3.33c-2.068.8-4.133 1.598-5.724 2.21a405.15 405.15 0 0 1-2.863 1.137c-.503.2-1.09.434-1.108 1.043-.017.585.52.844 1.05.975l.08.016 3.655 1.127a.5.5 0 0 0 .54-.236l1.247-2.923c.319-.747.458-1.026.852-1.282.493-.321 1.056.241.674.887l-2.072 3.513c-.22.373-.25.843.076 1.18l2.915 3.018a.5.5 0 0 0 .502.133l4.636-1.554c2.81-2.978 4.707-6.527 5.768-9.923a.5.5 0 0 0-.583-.627zM2.87 9.88l3.414 1.054"/></svg>
+            Join Channel
+        </a>
+        <button id="verify-join-btn" class="w-full border-2 border-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+            <span id="verify-text">Verify Membership</span>
+            <div id="verify-spinner" class="w-4 h-4 border-2 border-gray-600 border-t-transparent rounded-full animate-spin hidden"></div>
+        </button>
+        <p class="text-xs text-red-500 mt-4 hidden" id="verify-error">Verification failed. Please join and try again.</p>
+    </div>
+
+    <!-- App Container -->
+    <div id="app-container" class="main-page bg-[#f3f4f6]">
+        
         <!-- Header -->
-        <header class="header flex items-center justify-between">
+        <header class="bg-white/80 backdrop-blur-md sticky top-0 z-30 px-4 py-3 border-b border-gray-200 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="relative cursor-pointer" onclick="navigateTo('profile-page')">
-                    <img id="header-profile-pic" class="w-10 h-10 rounded-full border border-blue-100 object-cover hidden" src="" alt="Profile">
-                    <div id="header-initials-avatar" class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center border border-blue-50"><span id="header-initials" class="text-md font-bold text-blue-600"></span></div>
+                    <img id="header-profile-pic" class="w-10 h-10 rounded-full object-cover hidden" src="" alt="">
+                    <div id="header-initials-avatar" class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-300 flex items-center justify-center text-white font-bold text-lg shadow-sm">U</div>
                 </div>
                 <div>
-                    <h1 id="header-welcome-name" class="text-sm font-bold text-gray-800">Welcome</h1>
+                    <h1 class="text-sm font-bold text-gray-800 leading-tight">Welcome</h1>
                     <p id="header-balance-display" class="font-bold text-blue-600 text-xs">৳0.00</p>
                 </div>
             </div>
-            <div class="flex items-center gap-3">
-                <button id="header-deposit-btn" class="bg-blue-600 text-white p-2 px-4 rounded-full text-xs font-bold shadow-sm active:scale-95 transition-transform">Deposit</button>
-                <div class="relative">
-                     <button id="notification-btn" class="p-2 rounded-full bg-gray-50 border border-gray-100 text-gray-600 relative">
-                        <i data-lucide="bell" class="w-5 h-5"></i>
-                        <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 flex items-center justify-center rounded-full border border-white hidden">0</span>
-                    </button>
-                </div>
-                <button id="hamburger-menu-btn" class="p-2 text-gray-600"><i data-lucide="menu" class="w-6 h-6"></i></button>
+            <div class="flex items-center space-x-2">
+                <button onclick="navigateTo('notification-page')" class="p-2.5 rounded-full bg-gray-50 hover:bg-gray-100 transition relative border border-gray-100">
+                    <i data-lucide="bell" class="w-5 h-5 text-gray-600"></i>
+                    <span id="notification-badge" class="notification-badge hidden"></span>
+                </button>
+                <button onclick="toggleMenu()" class="p-2.5 rounded-full bg-gray-50 hover:bg-gray-100 transition border border-gray-100">
+                    <i data-lucide="menu" class="w-5 h-5 text-gray-600"></i>
+                </button>
             </div>
         </header>
 
-        <main class="flex-grow pb-24">
-            <!-- HOME PAGE -->
-            <div id="home-page" class="space-y-6 sub-page active">
-                <div class="px-4 pt-4">
-                    <div class="banner-wrapper">
-                        <div class="banner-inner" id="slides">
-                            <!-- Link Fixed Here -->
-                            <div class="slide active"><a href="https://t.me/EXPERTearn_team" target="_blank"><img src="https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png" alt="Slide 1"></a></div>
-                            <div class="slide"><a href="https://t.me/EXPERTearn_team" target="_blank"><img src="https://i.postimg.cc/W1syFD8p/Grey-Blue-Illustration-Refer-a-Friend-Instagram-Post-1080-x-720-px-20250917-223749-0000.png" alt="Slide 2"></a></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="px-4">
-                    <div class="bg-gradient-to-r from-blue-600 to-blue-500 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-                        <div class="absolute -right-6 -top-6 bg-white opacity-10 w-32 h-32 rounded-full blur-2xl"></div>
-                        <p class="text-blue-100 text-xs font-medium uppercase tracking-wide">Current Balance</p>
-                        <div class="flex items-center justify-between mt-1">
-                            <h2 id="balance-display" class="text-3xl font-bold">৳0.00</h2>
-                            <button id="home-deposit-btn" class="bg-white text-blue-600 px-4 py-1.5 rounded-lg text-sm font-bold shadow-md active:scale-95 transition-transform">Add Money</button>
-                        </div>
-                    </div>
-                </div>
+        <!-- Sidebar -->
+        <div id="menu-overlay" onclick="toggleMenu()"></div>
+        <aside id="slide-out-menu">
+            <div class="p-6 text-center border-b border-gray-100 bg-gray-50">
+                <h2 class="text-xl font-bold text-accent-gradient">Help Center</h2>
+                <p class="text-xs text-gray-400 mt-1">We are here to help you</p>
             </div>
+            <nav id="support-channels-list" class="flex-grow overflow-y-auto p-2"></nav>
+            <div class="p-4 border-t border-gray-100 text-center">
+                <p class="text-xs text-gray-300">v2.5.0 • Developed by BD STORE</p>
+            </div>
+        </aside>
 
-            <!-- PAYMENT PAGE -->
-            <div id="pay-page" class="p-4 space-y-6 sub-page">
-                 <div class="flex items-center gap-3 mb-2">
-                    <button onclick="navigateTo('home-page')" class="p-1 rounded-full bg-gray-100"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                    <h2 class="text-xl font-bold">Deposit Money</h2>
-                 </div>
-                 
-                 <div class="card-bg p-5 rounded-2xl">
-                     <p class="text-sm text-gray-500 mb-4">নিচের যে কোনো একটি নাম্বারে টাকা পাঠিয়ে ট্রানজেকশন আইডি দিন।</p>
-                     
-                     <div class="grid grid-cols-2 gap-3 mb-6">
-                        <div class="bg-gray-50 border p-3 rounded-xl text-center">
-                            <img src="https://i.postimg.cc/Jh9s6jWw/20250922-113350.png" class="w-8 h-8 mx-auto mb-2 rounded-full">
-                            <p class="font-bold text-sm">01864260513</p>
-                            <button onclick="copyToClipboard('01864260513')" class="mt-2 text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded w-full">COPY</button>
-                        </div>
-                        <div class="bg-gray-50 border p-3 rounded-xl text-center">
-                            <img src="https://i.postimg.cc/tCwGVkdH/20250922-113514.png" class="w-8 h-8 mx-auto mb-2 rounded-full">
-                            <p class="font-bold text-sm">01827750260</p>
-                            <button onclick="copyToClipboard('01827750260')" class="mt-2 text-[10px] bg-pink-100 text-pink-700 px-2 py-1 rounded w-full">COPY</button>
-                        </div>
-                     </div>
+        <!-- Main Content Area -->
+        <main class="flex-grow pb-24 overflow-y-auto" id="main-scroll">
+            
+            <!-- HOME PAGE -->
+            <div id="home-page" class="space-y-6 sub-page px-4 pt-4">
+                <!-- Slider -->
+                <div class="banner-wrapper bg-gray-200">
+                    <div class="banner-inner" id="slides">
+                         <!-- CORRECTED LINKS -->
+                        <div class="slide"><a href="https://t.me/EXPERTearn_team" target="_blank"><img src="https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png" alt="S1"></a></div>
+                        <div class="slide"><a href="https://t.me/EXPERTearn_team" target="_blank"><img src="https://i.postimg.cc/W1syFD8p/Grey-Blue-Illustration-Refer-a-Friend-Instagram-Post-1080-x-720-px-20250917-223749-0000.png" alt="S2"></a></div>
+                        <div class="slide"><a href="https://t.me/EXPERTearn_team" target="_blank"><img src="https://i.postimg.cc/52HsFwvV/Black-and-Orange-Money-You-Tube-Thumbnail-20250917-224706-0000.png" alt="S3"></a></div>
+                    </div>
+                </div>
 
-                     <div class="space-y-4">
-                        <div>
-                             <label class="text-xs font-bold text-gray-500 ml-1">Payment Method</label>
-                             <select id="deposit-method" class="w-full p-3 rounded-xl input-field text-sm"><option value="Nagad">Nagad</option><option value="bKash">bKash</option></select>
-                        </div>
-                        <div>
-                             <label class="text-xs font-bold text-gray-500 ml-1">Amount (BDT)</label>
-                             <input id="deposit-amount" type="number" placeholder="100" class="w-full p-3 rounded-xl input-field text-sm">
-                        </div>
-                        <div>
-                             <label class="text-xs font-bold text-gray-500 ml-1">Sender Number</label>
-                             <input id="sender-number" type="tel" placeholder="017xxxxxxxx" class="w-full p-3 rounded-xl input-field text-sm">
-                        </div>
-                        <div>
-                             <label class="text-xs font-bold text-gray-500 ml-1">Transaction ID</label>
-                             <input id="deposit-txid" type="text" placeholder="TrxID" class="w-full p-3 rounded-xl input-field text-sm">
-                        </div>
-                        <button id="deposit-btn" class="w-full btn-gradient p-3 rounded-xl text-sm mt-2">Verify Payment</button>
-                     </div>
-                 </div>
-                 
-                 <div>
-                     <h3 class="font-bold text-gray-800 mb-3 ml-1">Recent Transactions</h3>
-                     <div id="payment-history-list" class="space-y-3"></div>
-                 </div>
+                <!-- Balance Card -->
+                <div class="card-bg p-6 rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i data-lucide="wallet" class="w-24 h-24"></i>
+                    </div>
+                    <p class="text-gray-500 text-sm font-medium mb-1">Total Balance</p>
+                    <div class="flex items-center justify-between relative z-10">
+                        <p id="balance-display" class="text-4xl font-extrabold text-gray-800">৳0.00</p>
+                        <button onclick="navigateTo('pay-page')" class="bg-blue-600 text-white p-2 rounded-full shadow-lg shadow-blue-200 active:scale-95 transition-transform"><i data-lucide="plus" class="w-6 h-6"></i></button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-2 gap-4">
+                     <button onclick="navigateTo('mail-page')" class="card-bg p-4 rounded-xl flex items-center gap-3">
+                         <div class="p-2 rounded-lg bg-blue-100 text-blue-600"><i data-lucide="shopping-cart" class="w-5 h-5"></i></div>
+                         <span class="font-semibold text-gray-700">Buy Mail</span>
+                     </button>
+                     <button onclick="navigateTo('tutorial-page')" class="card-bg p-4 rounded-xl flex items-center gap-3">
+                         <div class="p-2 rounded-lg bg-red-100 text-red-600"><i data-lucide="youtube" class="w-5 h-5"></i></div>
+                         <span class="font-semibold text-gray-700">Tutorials</span>
+                     </button>
+                </div>
             </div>
 
             <!-- MAIL PAGE -->
-            <div id="mail-page" class="p-4 sub-page">
-                <div class="mail-view-switcher">
-                    <button id="login-mail-btn" class="active">LOGIN MAIL</button>
-                    <button id="otp-mail-btn">OTP MAIL</button>
+            <div id="mail-page" class="sub-page px-4 pt-4 space-y-5">
+                 <div class="bg-white p-1 rounded-xl flex border border-gray-200 shadow-sm">
+                    <button id="login-mail-btn" class="flex-1 py-2 rounded-lg text-sm font-bold text-gray-500 transition-all active bg-white shadow text-blue-600">LOGIN MAIL</button>
+                    <button id="otp-mail-btn" class="flex-1 py-2 rounded-lg text-sm font-bold text-gray-500 transition-all">OTP MAIL</button>
                 </div>
-
-                <div id="mail-views-container" class="relative overflow-hidden transition-all duration-300 min-h-[300px]">
-                    <div id="login-mail-container" class="absolute w-full top-0 left-0 transition-transform duration-300 translate-x-0 space-y-4"></div>
-                    <div id="otp-mail-container" class="absolute w-full top-0 left-0 transition-transform duration-300 translate-x-full space-y-4"></div>
-                </div>
-
-                <div class="mt-8">
-                    <div class="flex justify-between items-center mb-4">
-                         <h3 class="font-bold text-lg">My Purchase History</h3>
-                         <button id="copy-history-btn" class="text-blue-600 text-xs font-bold bg-blue-50 px-3 py-1.5 rounded-lg">Copy All</button>
+                
+                <div class="relative overflow-hidden min-h-[300px]" id="mail-views-wrapper">
+                    <div id="mail-views-container" class="relative transition-all duration-300">
+                         <div id="login-mail-container" class="w-full absolute top-0 left-0 transition-all duration-300 transform translate-x-0 space-y-4 pb-4"></div>
+                         <div id="otp-mail-container" class="w-full absolute top-0 left-0 transition-all duration-300 transform translate-x-full space-y-4 pb-4"></div>
                     </div>
-                    <div id="mail-purchase-history" class="space-y-3"></div>
+                </div>
+
+                <div class="pt-6 border-t border-gray-200">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold text-gray-800">History</h3>
+                         <div class="flex gap-2">
+                             <button id="copy-history-btn" class="p-2 bg-white border rounded-lg text-gray-600"><i data-lucide="copy" class="w-4 h-4"></i></button>
+                             <button id="download-history-btn" class="p-2 bg-white border rounded-lg text-gray-600"><i data-lucide="download" class="w-4 h-4"></i></button>
+                         </div>
+                    </div>
+                    <div id="mail-purchase-history" class="space-y-3 pb-6"></div>
                 </div>
             </div>
-            
-            <!-- ADMIN & OTHER PAGES (Keep hidden by default logic) -->
-            <div id="admin-page" class="p-4 space-y-6 sub-page">
-                 <h2 class="text-xl font-bold">Admin Panel</h2>
-                 <div class="card-bg p-4 rounded-xl">
-                    <label class="block text-sm font-medium mb-1">Select Mail Type</label>
-                    <select id="mail-type-select" class="w-full p-2 border rounded-lg mb-3"></select>
-                    <textarea id="mail-data-textarea" class="w-full p-2 border rounded-lg h-32 text-xs font-mono" placeholder="email/pass..."></textarea>
-                    <button id="add-mails-btn" class="w-full bg-black text-white p-3 rounded-lg mt-2 font-bold">ADD STOCK</button>
+
+            <!-- PAY PAGE -->
+            <div id="pay-page" class="sub-page px-4 pt-4 space-y-6">
+                <div class="text-center space-y-1">
+                    <h2 class="text-2xl font-bold text-gray-800">Add Money</h2>
+                    <p class="text-sm text-gray-500">Fast & Secure Deposit</p>
+                </div>
+
+                <!-- Methods -->
+                 <div class="grid grid-cols-2 gap-3">
+                    <div class="card-bg p-3 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 border border-transparent">
+                        <img src="https://i.postimg.cc/Jh9s6jWw/20250922-113350.png" class="w-10 h-10 mb-2 rounded-full">
+                        <span class="font-bold text-sm">Nagad</span>
+                        <div class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded mt-1 font-mono flex items-center gap-1" onclick="copyToClipboard('01864260513', this)">01864260513 <i data-lucide="copy" class="w-3 h-3"></i></div>
+                    </div>
+                    <div class="card-bg p-3 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 border border-transparent">
+                         <img src="https://i.postimg.cc/tCwGVkdH/20250922-113514.png" class="w-10 h-10 mb-2 rounded-full">
+                         <span class="font-bold text-sm">bKash</span>
+                         <div class="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded mt-1 font-mono flex items-center gap-1" onclick="copyToClipboard('01827750260', this)">01827750260 <i data-lucide="copy" class="w-3 h-3"></i></div>
+                    </div>
                  </div>
-                 <div id="replace-requests-list" class="space-y-3"></div>
+
+                 <!-- Form -->
+                 <div class="card-bg p-5 rounded-xl space-y-4">
+                     <p class="text-xs font-medium text-gray-500 uppercase">Deposit Form</p>
+                     <select id="deposit-method" class="w-full p-3 rounded-lg input-field text-sm">
+                         <option value="">Select Method</option>
+                         <option value="Nagad">Nagad</option>
+                         <option value="bKash">bKash</option>
+                         <option value="Rocket">Rocket</option>
+                         <option value="Binance">Binance</option>
+                     </select>
+                     <input id="deposit-amount" type="number" placeholder="Amount (BDT)" class="w-full p-3 rounded-lg input-field text-sm">
+                     <input id="sender-number" type="text" placeholder="Sender Number" class="w-full p-3 rounded-lg input-field text-sm">
+                     <input id="deposit-txid" type="text" placeholder="Transaction ID (TrxID)" class="w-full p-3 rounded-lg input-field text-sm">
+                     <button id="deposit-btn" class="w-full p-3 rounded-lg btn-gradient font-bold shadow-lg mt-2">Verify Deposit</button>
+                 </div>
+
+                 <div>
+                     <h3 class="text-sm font-bold text-gray-800 mb-3 ml-1">Recent Transactions</h3>
+                     <div id="payment-history-list" class="space-y-3 pb-6"></div>
+                 </div>
             </div>
 
             <!-- PROFILE PAGE -->
-            <div id="profile-page" class="p-4 space-y-5 sub-page">
-                 <div class="text-center pt-4">
-                      <div class="relative inline-block">
-                         <img id="profile-pic" class="w-24 h-24 rounded-full border-4 border-white shadow-md mx-auto object-cover" src="">
-                         <div id="profile-initials-avatar" class="w-24 h-24 rounded-full bg-gray-200 border-4 border-white shadow-md mx-auto flex items-center justify-center hidden"><span id="profile-initials" class="text-3xl font-bold text-gray-500"></span></div>
-                      </div>
-                      <h3 id="profile-name" class="text-xl font-bold text-gray-800 mt-3">Loading...</h3>
-                      <p id="profile-id" class="text-sm text-gray-400 font-mono bg-gray-100 inline-block px-2 py-1 rounded mt-1">ID: --</p>
+            <div id="profile-page" class="sub-page px-4 pt-6 space-y-5">
+                 <div class="flex flex-col items-center">
+                    <div class="relative mb-3">
+                         <img id="profile-pic" class="w-24 h-24 rounded-full border-4 border-white shadow-md object-cover hidden">
+                         <div id="profile-initials-avatar" class="w-24 h-24 rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 flex items-center justify-center text-white text-3xl font-bold shadow-md">U</div>
+                         <div class="absolute bottom-1 right-1 bg-green-500 w-5 h-5 rounded-full border-2 border-white"></div>
+                    </div>
+                    <h2 id="profile-name" class="text-xl font-bold text-gray-900">Loading...</h2>
+                    <p id="profile-username" class="text-sm text-gray-500">@username</p>
                  </div>
+                 
+                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                     <button id="more-features-btn" class="w-full p-4 flex justify-between items-center hover:bg-gray-50 border-b border-gray-100">
+                         <div class="flex items-center gap-3"><i data-lucide="zap" class="text-yellow-500 w-5 h-5"></i><span class="font-medium">More Features</span></div>
+                         <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                     </button>
+                     <button onclick="navigateTo('admin-page')" id="admin-nav-link" class="w-full p-4 flex justify-between items-center hover:bg-gray-50 border-b border-gray-100 hidden">
+                        <div class="flex items-center gap-3"><i data-lucide="shield" class="text-red-500 w-5 h-5"></i><span class="font-medium">Admin Panel</span></div>
+                        <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                     </button>
+                      <button onclick="toggleMenu()" class="w-full p-4 flex justify-between items-center hover:bg-gray-50">
+                         <div class="flex items-center gap-3"><i data-lucide="headphones" class="text-blue-500 w-5 h-5"></i><span class="font-medium">Support</span></div>
+                         <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+                     </button>
+                 </div>
+            </div>
 
-                 <div class="space-y-3 mt-4">
-                      <button onclick="toggleMenu()" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
-                          <span class="flex items-center gap-3 font-semibold text-gray-700"><i data-lucide="headphones" class="w-5 h-5"></i> Support</span>
-                          <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
-                      </button>
-                      <button class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between text-red-500">
-                          <span class="flex items-center gap-3 font-semibold"><i data-lucide="log-out" class="w-5 h-5"></i> Close App</span>
-                      </button>
+             <!-- NEW FULL PAGE NOTIFICATIONS -->
+             <div id="notification-page" class="sub-page px-4 pt-4 h-full bg-white fixed inset-0 z-40 overflow-y-auto">
+                <div class="flex items-center gap-3 mb-6 sticky top-0 bg-white py-2 border-b">
+                    <button onclick="window.history.back()" class="p-2 rounded-full hover:bg-gray-100"><i data-lucide="arrow-left" class="w-6 h-6"></i></button>
+                    <h2 class="text-xl font-bold text-gray-800">Notifications</h2>
+                </div>
+                <div id="notification-list" class="space-y-4 pb-20">
+                     <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- TUTORIAL PAGE -->
+            <div id="tutorial-page" class="sub-page px-4 pt-4 space-y-4">
+                 <h2 class="text-xl font-bold text-gray-800">Learning Center</h2>
+                 <div id="tutorial-list" class="space-y-4"></div>
+            </div>
+            
+             <!-- UPDATES PAGE -->
+             <div id="updates-page" class="sub-page px-4 pt-4 space-y-5">
+                 <h2 class="text-xl font-bold text-gray-800">Latest Updates</h2>
+                 <div id="updates-content"></div>
+                 <div>
+                     <h3 class="font-bold text-gray-700 mb-3">Reviews</h3>
+                     <div id="reviews-list" class="space-y-3"></div>
                  </div>
+             </div>
+
+            <!-- Features, Send, Link Pages (Hidden initially) -->
+            <div id="features-page" class="sub-page px-4 pt-4 space-y-5">
+                 <button onclick="navigateTo('profile-page')" class="flex items-center text-gray-500 mb-2"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Back</button>
+                 <div class="grid grid-cols-2 gap-4">
+                     <div class="card-bg p-4 rounded-xl text-center"><p class="text-xs text-gray-400">Received</p><p id="total-receive-display" class="text-xl font-bold text-green-500 mt-1">...</p></div>
+                     <div class="card-bg p-4 rounded-xl text-center"><p class="text-xs text-gray-400">Sent</p><p id="total-send-display" class="text-xl font-bold text-red-500 mt-1">...</p></div>
+                 </div>
+                 <div class="grid grid-cols-2 gap-4">
+                     <button id="features-receive-btn" class="p-3 bg-blue-500 text-white rounded-xl font-bold shadow-lg shadow-blue-200">Receive</button>
+                     <button id="features-send-btn" class="p-3 bg-orange-500 text-white rounded-xl font-bold shadow-lg shadow-orange-200">Send</button>
+                 </div>
+                 <div><h3 class="font-bold mb-3">Transfers</h3><div id="transfer-history-list" class="space-y-3"></div></div>
+            </div>
+            
+            <div id="send-page" class="sub-page px-4 pt-4 space-y-5">
+                 <button onclick="navigateTo('features-page')" class="flex items-center text-gray-500"><i data-lucide="arrow-left" class="w-4 h-4 mr-1"></i> Back</button>
+                 <div class="card-bg p-5 rounded-xl space-y-4">
+                     <h3 class="font-bold text-lg">Send Money</h3>
+                     <input id="send-recipient-id" type="text" placeholder="Recipient Telegram ID" class="w-full p-3 rounded-lg input-field">
+                     <div>
+                        <input id="send-amount" type="number" placeholder="Amount (min 20)" class="w-full p-3 rounded-lg input-field">
+                        <p id="send-fee-display" class="text-xs text-orange-500 mt-1 h-4"></p>
+                     </div>
+                     <button id="submit-send-btn" class="w-full btn-gradient p-3 rounded-lg font-bold">Transfer</button>
+                 </div>
+            </div>
+
+            <!-- Admin Page -->
+            <div id="admin-page" class="sub-page px-4 pt-4 space-y-6">
+                <h2 class="text-xl font-bold text-center">Admin Dashboard</h2>
+                <div class="card-bg p-4 rounded-xl space-y-3">
+                    <h3 class="font-bold">Add Mails</h3>
+                    <select id="mail-type-select" class="w-full p-2 border rounded input-field"></select>
+                    <textarea id="mail-data-textarea" rows="5" class="w-full p-2 border rounded input-field font-mono text-xs" placeholder="email/pass..."></textarea>
+                    <button id="add-mails-btn" class="w-full bg-black text-white p-2 rounded">Add</button>
+                </div>
+                <div class="mt-4">
+                     <h3 class="font-bold mb-2">Replace Requests</h3>
+                     <div id="replace-requests-list" class="space-y-3"></div>
+                </div>
             </div>
 
         </main>
 
+        <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <a onclick="navigateTo('home-page')" class="nav-link-premium center-home-link active"><i data-lucide="home" class="w-6 h-6"></i></a>
-            
-            <a onclick="navigateTo('mail-page')" class="nav-link-premium" data-page="mail-page"><i data-lucide="shopping-bag" class="w-5 h-5 mb-1 icon"></i><span>Store</span></a>
-            <a onclick="navigateTo('pay-page')" class="nav-link-premium" data-page="pay-page"><i data-lucide="wallet" class="w-5 h-5 mb-1 icon"></i><span>Deposit</span></a>
-            <a onclick="navigateTo('profile-page')" class="nav-link-premium" data-page="profile-page"><i data-lucide="user" class="w-5 h-5 mb-1 icon"></i><span>Profile</span></a>
-            <a id="admin-nav-link" onclick="navigateTo('admin-page')" class="nav-link-premium hidden" data-page="admin-page"><i data-lucide="shield" class="w-5 h-5 mb-1 icon"></i><span>Admin</span></a>
+            <button class="nav-link-premium" onclick="navigateTo('updates-page')">
+                <i data-lucide="bell-ring" class="icon"></i>
+            </button>
+             <button class="nav-link-premium" onclick="navigateTo('tutorial-page')">
+                <i data-lucide="play-circle" class="icon"></i>
+            </button>
+             <button class="center-home-link" onclick="navigateTo('home-page')">
+                <i data-lucide="home" class="icon"></i>
+            </button>
+             <button class="nav-link-premium" onclick="navigateTo('mail-page')">
+                <i data-lucide="shopping-bag" class="icon"></i>
+            </button>
+             <button class="nav-link-premium" onclick="navigateTo('profile-page')">
+                <i data-lucide="user" class="icon"></i>
+            </button>
         </nav>
     </div>
-
-    <!-- === 3. FULL PAGE NOTIFICATION OVERLAY === -->
-    <div id="notification-modal" class="full-screen-overlay">
-        <div class="modal-header-fixed">
-             <h2 class="text-lg font-bold flex items-center gap-2"><i data-lucide="bell-ring" class="w-5 h-5 text-blue-600"></i> Notifications</h2>
-             <button id="close-notif-btn" class="p-2 bg-gray-100 rounded-full hover:bg-gray-200"><i data-lucide="x" class="w-5 h-5"></i></button>
-        </div>
-        <div id="notification-list" class="p-4 space-y-3 pb-24">
-             <!-- Content loaded dynamically -->
-        </div>
+    
+    <!-- Report Modal (Popups for logic) -->
+    <div id="report-issue-modal" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+         <div class="bg-white p-6 rounded-2xl w-full max-w-sm space-y-4">
+             <div class="flex justify-between items-center"><h3 class="font-bold text-lg">Report Issue</h3><button onclick="document.getElementById('report-issue-modal').classList.add('hidden')"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+             <p id="report-modal-mail-type" class="text-center font-mono bg-gray-100 p-1 rounded"></p>
+             <form id="report-issue-form" class="space-y-3">
+                 <input type="hidden" id="report-purchase-id"><input type="hidden" id="report-purchase-cost"><input type="hidden" id="report-purchase-saleId">
+                 <textarea id="report-reason" class="w-full p-3 rounded border input-field text-sm" placeholder="Describe issue..." rows="3" required></textarea>
+                 <input type="text" id="report-proof" class="w-full p-3 rounded border input-field text-sm" placeholder="Proof link (Screenshot/Video)">
+                 <button type="submit" class="w-full btn-gradient p-2.5 rounded-lg">Submit</button>
+             </form>
+         </div>
     </div>
     
-    <!-- Sidebar Menu -->
-    <div id="menu-overlay" class="fixed inset-0 bg-black/50 z-40 hidden" onclick="toggleMenu()"></div>
-    <aside id="slide-out-menu" class="fixed top-0 left-0 bottom-0 w-[280px] bg-white z-50 transform -translate-x-full transition-transform duration-300 shadow-2xl flex flex-col">
-        <div class="p-6 bg-blue-50 border-b">
-            <h2 class="text-xl font-bold text-blue-600">Help Center</h2>
-            <p class="text-xs text-gray-500 mt-1">We are here to help you</p>
-        </div>
-        <div id="support-channels-list" class="flex-grow p-4 space-y-2 overflow-y-auto"></div>
-        <div class="p-4 border-t text-center text-xs text-gray-400">Version 2.0.5 Pro</div>
-    </aside>
-
-    <!-- Global Alert Modal -->
-    <div id="custom-alert" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-[1000] p-6 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-sm text-center shadow-2xl">
-            <p id="alert-message" class="mb-6 text-gray-800 font-medium"></p>
-            <button onclick="document.getElementById('custom-alert').classList.add('hidden')" class="btn-gradient w-full py-2.5 rounded-xl">OK</button>
-        </div>
-    </div>
-    
-    <!-- Buy Confirm / Details / Success Modals (simplified for space) -->
-    <div id="purchase-success-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-6 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-sm relative text-center">
-            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"><i data-lucide="check" class="w-8 h-8 text-green-600"></i></div>
-            <h3 class="text-xl font-bold mb-2">Success!</h3>
-            <div class="bg-gray-50 p-3 rounded-lg mb-2 text-left space-y-2">
-                 <div class="flex justify-between items-center"><span class="text-xs text-gray-500">Email</span> <button onclick="copyToClipboard(document.getElementById('suc-email').innerText)" class="text-blue-500 text-xs font-bold">Copy</button></div>
-                 <p id="suc-email" class="font-mono text-sm break-all select-all"></p>
-                 <div class="h-px bg-gray-200"></div>
-                 <div class="flex justify-between items-center"><span class="text-xs text-gray-500">Pass</span> <button onclick="copyToClipboard(document.getElementById('suc-pass').innerText)" class="text-blue-500 text-xs font-bold">Copy</button></div>
-                 <p id="suc-pass" class="font-mono text-sm break-all select-all"></p>
+    <!-- Purchase Success Modal -->
+     <div id="purchase-success-modal" class="hidden fixed inset-0 bg-black/60 z-[100] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4 text-center">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2"><i data-lucide="check" class="w-8 h-8 text-green-600"></i></div>
+            <h3 class="text-xl font-bold">Successful!</h3>
+            <div class="space-y-2 text-left bg-gray-50 p-3 rounded-xl border border-gray-100">
+                <div class="flex justify-between"><span id="purchase-success-email" class="text-sm font-mono truncate mr-2 select-all"></span><i data-lucide="copy" class="w-4 h-4 text-gray-400 cursor-pointer" onclick="copyToClipboard(document.getElementById('purchase-success-email').innerText, this)"></i></div>
+                <div class="flex justify-between border-t border-gray-200 pt-2"><span id="purchase-success-password" class="text-sm font-mono select-all"></span><i data-lucide="copy" class="w-4 h-4 text-gray-400 cursor-pointer" onclick="copyToClipboard(document.getElementById('purchase-success-password').innerText, this)"></i></div>
             </div>
-            <button onclick="document.getElementById('purchase-success-modal').classList.add('hidden')" class="btn-gradient w-full py-2.5 rounded-xl mt-2">Continue Shopping</button>
+            <button onclick="document.getElementById('purchase-success-modal').classList.add('hidden')" class="w-full btn-gradient p-3 rounded-xl font-bold">Close</button>
         </div>
     </div>
-
+    
+    <!-- Alert Modal -->
+    <div id="custom-alert" class="hidden fixed inset-0 bg-black/60 z-[150] flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl p-5 w-full max-w-xs text-center shadow-2xl">
+            <p id="alert-message" class="mb-4 text-gray-700 font-medium"></p>
+            <button onclick="document.getElementById('custom-alert').classList.add('hidden')" class="bg-gray-800 text-white px-6 py-2 rounded-lg">OK</button>
+        </div>
+    </div>
 
     <script type="module">
-        // -----------------------------------------------------------
-        // CONFIGURATION FOR CHANNEL JOIN CHECK (EDIT HERE)
-        // -----------------------------------------------------------
-        const ADMIN_UID = "6954647230"; // Your TG ID
+        // CONFIGURATION AREA
+        const ADMIN_UID = "6954647230"; // Your Telegram ID for Admin
         
-        // SECURITY NOTE: In a strictly production app, bot tokens should remain on server. 
-        // For a Mini App / Single File Solution, we use it here but handle CORS via proxy.
-        const BOT_TOKEN = "7544026368:AAELv0n5pI2d7w-pB47WpLw-h1O438wG_gQ"; // <--- আপনার বট টোকেন দিন (e.g. 1234:AbCd...)
-        const REQUIRED_CHANNEL = "@EXPERTearn_team"; // <--- আপনার চ্যানেল ইউজারনেম (@ সহ)
-        // -----------------------------------------------------------
-
-
+        // --- TELEGRAM BOT CONFIG FOR CHANNEL CHECK ---
+        const BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"; // !!! PASTE YOUR BOT TOKEN HERE !!! (Warning: In production, do this on backend)
+        const REQUIRED_CHANNEL_ID = "@EXPERTearn_team"; // Your Channel Username or ID (-100...)
+        const CHANNEL_INVITE_LINK = "https://t.me/EXPERTearn_team";
+        
+        // --- FIREBASE CONFIG ---
         const firebaseConfig = {
-            apiKey: "AIzaSyDdSczWEMAtBJTGaQ-vISLXws1ZnsSsE3M",
-            authDomain: "newsell-5725d.firebaseapp.com",
-            projectId: "newsell-5725d",
-            storageBucket: "newsell-5725d.firebasestorage.app",
-            messagingSenderId: "714958195778",
-            appId: "1:714958195778:web:c5fdbd01416b60c4fe71db"
+          apiKey: "AIzaSyDdSczWEMAtBJTGaQ-vISLXws1ZnsSsE3M",
+          authDomain: "newsell-5725d.firebaseapp.com",
+          projectId: "newsell-5725d",
+          storageBucket: "newsell-5725d.firebasestorage.app",
+          messagingSenderId: "714958195778",
+          appId: "1:714958195778:web:c5fdbd01416b60c4fe71db"
         };
-        
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, runTransaction, getCountFromServer, writeBatch, updateDoc, Timestamp, onSnapshot, arrayUnion, arrayRemove, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
@@ -452,461 +550,691 @@
         let currentUserTg = null;
         let userData = null;
         let appConfig = {};
+        let activeCountdownInterval = null;
 
-        // DOM Elements
+        // Premium Loader Logic
         const loader = document.getElementById('loader');
+        const progressBar = document.getElementById('loader-progress');
         const loaderStatus = document.getElementById('loader-status');
-        const joinGate = document.getElementById('join-gate');
-        const appContainer = document.getElementById('app-container');
 
-        // ---------- CHANNEL CHECK FUNCTIONALITY ----------
-        window.verifyTelegramMembership = async (userId, isManualRetry = false) => {
-            if(userId == ADMIN_UID) { // Admin always bypass
-                 unlockApp();
-                 return;
-            }
-
-            if(isManualRetry) {
-                document.getElementById('gate-error-msg').innerText = "Checking status...";
-            } else {
-                loaderStatus.innerText = "Checking channel membership...";
-            }
-            
-            // NOTE: Using CORS proxy because browser blocks calls to api.telegram.org directly
-            const proxyUrl = "https://corsproxy.io/?"; 
-            const targetUrl = `https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${REQUIRED_CHANNEL}&user_id=${userId}`;
-            const finalUrl = proxyUrl + encodeURIComponent(targetUrl);
-
-            try {
-                const response = await fetch(finalUrl);
-                const data = await response.json();
-                
-                if (data.ok) {
-                    const status = data.result.status;
-                    // Allowed statuses
-                    if (['creator', 'administrator', 'member', 'restricted'].includes(status)) {
-                        if(isManualRetry) {
-                            document.getElementById('gate-error-msg').innerText = "Verified! Entering...";
-                            setTimeout(unlockApp, 1000);
-                        } else {
-                            unlockApp();
-                        }
-                    } else {
-                        // User left or kicked
-                        showJoinGate("You must join the channel to continue.");
-                    }
-                } else {
-                    console.error("Telegram API Error:", data);
-                    // Fallback: If checking fails (e.g. bot not admin in channel), we let user in BUT warn admin console.
-                    // For safety in this demo, let's Block if error, but user requested 'Verification'.
-                    // You can change logic to unlockApp() if you want fail-open.
-                     showJoinGate("Unable to verify. Make sure you joined.");
-                }
-            } catch (error) {
-                console.error("Network Check Error:", error);
-                // On Network error (e.g. CORS fails completely), fallback to gate for safety
-                if(isManualRetry) {
-                     document.getElementById('gate-error-msg').innerText = "Network Error. Try opening via Telegram again.";
-                } else {
-                    showJoinGate("Connection error during verification.");
-                }
-            }
-        };
-
-        function showJoinGate(msg) {
-            loader.style.opacity = 0;
-            setTimeout(() => { loader.style.display = 'none'; }, 500);
-            
-            appContainer.style.display = 'none';
-            joinGate.style.display = 'flex'; // Show Full Screen Gate
-            document.getElementById('gate-error-msg').innerText = msg || "";
-        }
-
-        function unlockApp() {
-            joinGate.style.display = 'none';
-            appContainer.style.display = 'block'; // Make sure flex/block handling matches CSS
-            
-            loader.style.opacity = 0;
-            setTimeout(() => { loader.style.display = 'none'; }, 600);
-            
-            // Trigger Loaders
-            loadUpdates();
-            setupBanner();
-        }
-
-
-        // ---------- MAIN INIT ----------
         window.onload = async () => {
-            lucide.createIcons();
+            // Animate Loader
+            setTimeout(() => { progressBar.style.width = '30%'; }, 200);
             
             try {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
-                window.Telegram.WebApp.enableClosingConfirmation();
-                
                 currentUserTg = window.Telegram.WebApp.initDataUnsafe.user;
-                // FOR TESTING WITHOUT TELEGRAM (Delete in production)
-                // currentUserTg = { id: 6954647230, first_name: "Test", last_name: "User", username: "tester" }; 
                 
+                // For development/testing outside telegram
                 if (!currentUserTg) {
-                    loaderStatus.innerText = "Error: Open from Telegram";
-                    return;
+                     //currentUserTg = { id: 6954647230, first_name: "Test", last_name: "User", username: "testuser", photo_url: null };
+                     //loaderStatus.innerText = "Dev Mode Active...";
+                     loaderStatus.innerText = "Error: Please open from Telegram";
+                     return;
                 }
+
+                progressBar.style.width = '60%';
                 
-                window.currentTgUserId = currentUserTg.id;
+                // STEP 1: Verify Channel Membership (Using Bot API via Client - Warning Applied)
+                const isMember = await verifyTelegramChannelMembership(currentUserTg.id);
+                if(!isMember) {
+                     loader.classList.add('hidden');
+                     showJoinChannelScreen();
+                     return;
+                }
+
+                progressBar.style.width = '80%';
+                lucide.createIcons();
+                setupEventListeners();
+                setupBanner();
 
                 await initUserSession();
-                
-                // Perform Membership Check
-                await verifyTelegramMembership(currentUserTg.id);
+
+                progressBar.style.width = '100%';
+                setTimeout(() => {
+                    loader.style.opacity = '0';
+                    setTimeout(() => loader.style.display = 'none', 500);
+                }, 500);
 
             } catch (e) {
                 console.error("Init Error", e);
-                loaderStatus.innerText = "Initialization failed. Restart app.";
+                loaderStatus.innerText = "Error Loading App.";
+                showAlert("Error: " + e.message);
             }
-
-            setupEventListeners();
         };
 
-        async function initUserSession() {
-            loaderStatus.innerText = "Loading user profile...";
-            const tgChatId = String(currentUserTg.id);
-            const userRef = doc(db, "users", tgChatId);
-            
-            // Real-time listener for balance updates
-            onSnapshot(userRef, (docSnap) => {
-                if(docSnap.exists()){
-                     userData = docSnap.data();
-                     updateUI();
-                     
-                     // Handle Block
-                     if (userData.isBlocked) {
-                         document.body.innerHTML = `<div class='h-screen flex items-center justify-center text-red-500 font-bold'>ACCOUNT BLOCKED</div>`;
-                     }
-                }
-            });
-
-            // Initial fetch or Create
-            let userSnap = await getDoc(userRef);
-            if (!userSnap.exists()) {
-                const initialData = {
-                    tgChatId: tgChatId,
-                    name: `${currentUserTg.first_name || ''} ${currentUserTg.last_name || ''}`.trim(),
-                    username: currentUserTg.username || null,
-                    balance: 0,
-                    createdAt: serverTimestamp(),
-                    isBlocked: false
-                };
-                await setDoc(userRef, initialData);
-                userData = initialData;
-            } else {
-                userData = userSnap.data();
-                // Update basic info silently
-                updateDoc(userRef, {
-                    name: `${currentUserTg.first_name || ''} ${currentUserTg.last_name || ''}`.trim(),
-                    lastSeen: serverTimestamp()
-                });
+        // --- NEW: Channel Verification Logic ---
+        async function verifyTelegramChannelMembership(userId) {
+            if (BOT_TOKEN === "YOUR_BOT_TOKEN_HERE") {
+                console.warn("Bot Token Not Set. Skipping Check."); 
+                return true; // Bypass if not configured
             }
             
-            await fetchAppConfig();
+            loaderStatus.innerText = "Verifying Membership...";
+            try {
+                // Using fetch to call Telegram Bot API directly
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${REQUIRED_CHANNEL_ID}&user_id=${userId}`;
+                const response = await fetch(url);
+                const data = await response.json();
 
-            if (tgChatId === ADMIN_UID) {
-                document.getElementById('admin-nav-link').classList.remove('hidden');
+                if (data.ok) {
+                    const status = data.result.status;
+                    // 'creator', 'administrator', 'member', 'restricted' are considered inside
+                    // 'left', 'kicked' are outside
+                    if (["creator", "administrator", "member", "restricted"].includes(status)) {
+                        return true;
+                    }
+                }
+                return false;
+            } catch (e) {
+                console.error("Verify API Error:", e);
+                // In case of network error, maybe allow or show generic error. For safety, allowing to not block legitimate users if API fails
+                return true; 
             }
         }
 
+        function showJoinChannelScreen() {
+            const overlay = document.getElementById('join-channel-overlay');
+            const linkBtn = document.getElementById('channel-link-btn');
+            const verifyBtn = document.getElementById('verify-join-btn');
+            const verifySpinner = document.getElementById('verify-spinner');
+            const verifyText = document.getElementById('verify-text');
+            const errorMsg = document.getElementById('verify-error');
+
+            linkBtn.href = CHANNEL_INVITE_LINK;
+            overlay.classList.remove('hidden');
+
+            verifyBtn.onclick = async () => {
+                verifyText.textContent = "Checking...";
+                verifySpinner.classList.remove('hidden');
+                errorMsg.classList.add('hidden');
+                
+                // Slight delay to simulate check and allow API to propagate
+                await new Promise(r => setTimeout(r, 1000));
+                
+                const isJoined = await verifyTelegramChannelMembership(currentUserTg.id);
+                if (isJoined) {
+                     location.reload(); // Reload to start app normally
+                } else {
+                    verifyText.textContent = "Verify Membership";
+                    verifySpinner.classList.add('hidden');
+                    errorMsg.classList.remove('hidden');
+                }
+            };
+        }
+
+        async function initUserSession() {
+            const tgChatId = String(currentUserTg.id);
+            const userRef = doc(db, "users", tgChatId);
+            let userSnap = await getDoc(userRef);
+            
+            // Unblock Logic Check
+            if (userSnap.exists()) {
+                userData = userSnap.data();
+                if (userData.isBlocked && userData.blockedUntil && userData.blockedUntil.toMillis() < Date.now()) {
+                    await updateDoc(userRef, { isBlocked: false, blockedUntil: null });
+                    userData.isBlocked = false;
+                }
+                await updateDoc(userRef, { name: `${currentUserTg.first_name} ${currentUserTg.last_name || ''}`, lastSeen: serverTimestamp() });
+            } else {
+                // New User
+                userData = {
+                    tgChatId: tgChatId,
+                    name: `${currentUserTg.first_name} ${currentUserTg.last_name || ''}`,
+                    username: currentUserTg.username,
+                    balance: 0,
+                    createdAt: serverTimestamp(),
+                    isBlocked: false,
+                };
+                await setDoc(userRef, userData);
+            }
+
+            if (userData.isBlocked) {
+                showAlert("Account Blocked. Try again later.");
+                loader.classList.remove('hidden'); // keep loader
+                throw new Error("Blocked");
+            }
+
+            await fetchAppConfig();
+            if (String(tgChatId) === ADMIN_UID) document.getElementById('admin-nav-link').classList.remove('hidden');
+            
+            updateUI();
+            loadSupportMenu();
+            listenForNotifications();
+            showMainPage('app-container');
+            
+            // Custom history management for pages
+            window.history.pushState({page: 'home-page'}, "", "");
+            window.onpopstate = function(e) {
+                if(e.state && e.state.page) navigateTo(e.state.page, false);
+            };
+
+            navigateTo('home-page');
+        }
+        
         async function fetchAppConfig() {
             const configRef = doc(db, "config", "main");
-            const configSnap = await getDoc(configRef);
-            appConfig = configSnap.exists() ? configSnap.data() : { mails: [] };
+            const snap = await getDoc(configRef);
+            appConfig = snap.exists() ? snap.data() : { mails: [] };
         }
 
         function updateUI() {
-             if (!userData) return;
-             document.getElementById('balance-display').textContent = `৳${(userData.balance || 0).toFixed(2)}`;
-             document.getElementById('header-balance-display').textContent = `৳${(userData.balance || 0).toFixed(2)}`;
-             
-             // Update Header Profile
-             const initials = (currentUserTg.first_name?.[0]||'') + (currentUserTg.last_name?.[0]||'');
-             document.getElementById('header-initials').innerText = initials.toUpperCase();
-             document.getElementById('header-welcome-name').innerText = `Hi, ${currentUserTg.first_name}`;
-             document.getElementById('profile-name').innerText = userData.name;
-             document.getElementById('profile-id').innerText = "ID: " + userData.tgChatId;
-             document.getElementById('profile-initials').innerText = initials.toUpperCase();
-        }
-
-        // ---------- NOTIFICATIONS (Full Page) ----------
-        const notifModal = document.getElementById('notification-modal');
-        const notifBadge = document.getElementById('notification-badge');
-
-        document.getElementById('notification-btn').addEventListener('click', async () => {
-             notifModal.classList.add('active'); // Slide up
-             loadNotifications();
-             // Reset badge
-             notifBadge.classList.add('hidden');
-             if(userData){
-                await updateDoc(doc(db, "users", userData.tgChatId), { lastSeenNotification: Timestamp.now() });
-             }
-        });
-
-        document.getElementById('close-notif-btn').addEventListener('click', () => {
-             notifModal.classList.remove('active');
-        });
-
-        function setupEventListeners() {
-             // Navigation
-             window.navigateTo = (pageId) => {
-                 document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
-                 document.getElementById(pageId).classList.add('active');
+             if (!currentUserTg || !userData) return;
+             // Header Logic
+             const photo = userData.photo_url || currentUserTg.photo_url;
+             if(photo) {
+                 document.getElementById('header-profile-pic').src = photo;
+                 document.getElementById('header-profile-pic').classList.remove('hidden');
+                 document.getElementById('header-initials-avatar').classList.add('hidden');
                  
-                 // Bottom Nav Active State
-                 document.querySelectorAll('.nav-link-premium').forEach(el => {
-                     el.classList.remove('active');
-                     if(el.dataset.page === pageId) el.classList.add('active');
-                 });
-
-                 // Page Load Logic
-                 if(pageId === 'mail-page') loadMailStore();
-                 if(pageId === 'pay-page') loadPaymentHistory();
-                 if(pageId === 'admin-page') populateAdminMailTypes();
-             };
+                 // Also Update Profile Page
+                 document.getElementById('profile-pic').src = photo;
+                 document.getElementById('profile-pic').classList.remove('hidden');
+                 document.getElementById('profile-initials-avatar').classList.add('hidden');
+             } else {
+                 document.getElementById('profile-name').innerText = userData.name;
+             }
              
-             document.getElementById('header-deposit-btn').onclick = () => window.navigateTo('pay-page');
-             document.getElementById('home-deposit-btn').onclick = () => window.navigateTo('pay-page');
-
-             // Hamburger Slide Menu
-             window.toggleMenu = () => {
-                 const menu = document.getElementById('slide-out-menu');
-                 const overlay = document.getElementById('menu-overlay');
-                 if(menu.classList.contains('-translate-x-full')) {
-                     menu.classList.remove('-translate-x-full');
-                     overlay.classList.remove('hidden');
-                     loadSupportChannels();
-                 } else {
-                     menu.classList.add('-translate-x-full');
-                     overlay.classList.add('hidden');
-                 }
-             };
-             document.getElementById('hamburger-menu-btn').onclick = window.toggleMenu;
-
-             // Mail Tabs
-             document.getElementById('login-mail-btn').onclick = () => switchMailView('login');
-             document.getElementById('otp-mail-btn').onclick = () => switchMailView('otp');
+             document.getElementById('header-balance-display').innerText = `৳${(userData.balance || 0).toFixed(2)}`;
+             document.getElementById('balance-display').innerText = `৳${(userData.balance || 0).toFixed(2)}`;
              
-             // Deposit Action
-             document.getElementById('deposit-btn').onclick = handleDeposit;
-             
-             // Admin Add Mail
-             document.getElementById('add-mails-btn').onclick = handleAddMails;
+             document.getElementById('profile-name').innerText = userData.name;
+             document.getElementById('profile-username').innerText = `@${currentUserTg.username || 'user'}`;
         }
 
-        // ---------- LOGIC HELPER FUNCTIONS (Condensed) ----------
+        // Navigation
+        function showMainPage(id) {
+             document.querySelectorAll('.main-page').forEach(el => el.classList.remove('active'));
+             document.getElementById(id).classList.add('active');
+        }
         
-        async function loadMailStore() {
-             const loginContainer = document.getElementById('login-mail-container');
-             const otpContainer = document.getElementById('otp-mail-container');
-             loginContainer.innerHTML = '<div class="text-center p-4">Loading stock...</div>';
-             
-             const allMails = appConfig.mails || [];
-             const loginMails = allMails.filter(m => !m.category || m.category === 'login');
-             const otpMails = allMails.filter(m => m.category === 'otp');
+        window.navigateTo = function(pageId, pushState = true) {
+            document.querySelectorAll('.sub-page').forEach(p => p.classList.remove('active'));
+            
+            const target = document.getElementById(pageId);
+            if(target) {
+                target.classList.add('active');
+                
+                // Bottom Nav update
+                document.querySelectorAll('.nav-link-premium').forEach(btn => btn.classList.remove('active'));
+                const iconMap = {'home-page':2, 'mail-page':3, 'profile-page':4, 'tutorial-page':1, 'updates-page':0}; // Roughly
+                
+                if (pushState) window.history.pushState({page: pageId}, "", "");
+                
+                // Dynamic Loaders
+                if (pageId === 'mail-page') loadMailStore();
+                if (pageId === 'pay-page') loadPaymentHistory();
+                if (pageId === 'notification-page') loadFullPageNotifications();
+                if (pageId === 'updates-page') { loadUpdates(); loadReviews(); }
+                if (pageId === 'tutorial-page') loadTutorials();
+                if (pageId === 'admin-page') { loadAdminData(); }
+                if (pageId === 'features-page') loadFeaturesData();
+                
+                // Icon re-render
+                lucide.createIcons();
+            }
+        }
+        
+        function toggleMenu() {
+            document.getElementById('slide-out-menu').classList.toggle('open');
+            document.getElementById('menu-overlay').classList.toggle('open');
+        }
 
+        // Event Listeners
+        function setupEventListeners() {
+            document.getElementById('deposit-btn').addEventListener('click', handleDeposit);
+            document.getElementById('login-mail-btn').addEventListener('click', () => switchMailTab('login'));
+            document.getElementById('otp-mail-btn').addEventListener('click', () => switchMailTab('otp'));
+            document.getElementById('more-features-btn').addEventListener('click', () => navigateTo('features-page'));
+            
+            // Features Btns
+            document.getElementById('features-send-btn').addEventListener('click', () => navigateTo('send-page'));
+            document.getElementById('features-receive-btn').addEventListener('click', () => copyToClipboard(String(userData.tgChatId)));
+            document.getElementById('submit-send-btn').addEventListener('click', handleSendMoney);
+            
+            // Report Form
+            document.getElementById('report-issue-form').addEventListener('submit', handleReportSubmit);
+            document.getElementById('add-mails-btn').addEventListener('click', handleAddMails);
+            
+            document.getElementById('copy-history-btn').addEventListener('click', handleCopyHistory);
+             // Setup Mail Views height logic
+             switchMailTab('login'); // Default
+        }
+        
+        // --- Full Page Notifications Logic ---
+        function listenForNotifications() {
+             const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"), limit(5));
+             onSnapshot(q, (snapshot) => {
+                 let count = 0;
+                 const lastSeen = userData.lastSeenNotification ? userData.lastSeenNotification.toMillis() : 0;
+                 snapshot.docs.forEach(d => {
+                     const data = d.data();
+                     if((!data.recipientId || data.recipientId == userData.tgChatId) && data.createdAt.toMillis() > lastSeen) {
+                         count++;
+                     }
+                 });
+                 const badge = document.getElementById('notification-badge');
+                 if(count > 0) { badge.textContent = count; badge.classList.remove('hidden'); }
+                 else badge.classList.add('hidden');
+             });
+        }
+        
+        async function loadFullPageNotifications() {
+            const list = document.getElementById('notification-list');
+            list.innerHTML = `<div class="flex justify-center p-10"><div class="spinner border-gray-400 border-t-blue-600"></div></div>`;
+            
+            // Reset Badge
+             const badge = document.getElementById('notification-badge');
+             badge.classList.add('hidden');
+             updateDoc(doc(db, "users", userData.tgChatId), { lastSeenNotification: serverTimestamp() });
+             userData.lastSeenNotification = Timestamp.now();
+            
+            const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"), limit(30));
+            const snap = await getDocs(q);
+            
+            const myNotifs = snap.docs.filter(d => !d.data().recipientId || d.data().recipientId == userData.tgChatId);
+            
+            if(myNotifs.length === 0) {
+                list.innerHTML = `<div class="flex flex-col items-center justify-center pt-20 text-gray-400 space-y-3"><i data-lucide="bell-off" class="w-12 h-12 opacity-50"></i><p>No notifications yet</p></div>`;
+            } else {
+                list.innerHTML = myNotifs.map(d => {
+                    const n = d.data();
+                    const date = n.createdAt ? n.createdAt.toDate().toLocaleDateString() : '';
+                    return `<div class="p-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 transition">
+                        <div class="flex justify-between items-start mb-1">
+                             <h4 class="font-bold text-gray-800 text-sm">${n.title}</h4>
+                             <span class="text-[10px] text-gray-400">${date}</span>
+                        </div>
+                        <p class="text-sm text-gray-500 leading-snug">${n.message}</p>
+                    </div>`
+                }).join('');
+            }
+            lucide.createIcons();
+        }
+
+        // --- MAIL LOGIC ---
+        function switchMailTab(tab) {
+             const loginCont = document.getElementById('login-mail-container');
+             const otpCont = document.getElementById('otp-mail-container');
+             const wrapper = document.getElementById('mail-views-wrapper');
+             
+             document.querySelectorAll('#mail-page button').forEach(b => b.classList.remove('shadow', 'bg-white', 'text-blue-600'));
+             
+             if(tab === 'login') {
+                 document.getElementById('login-mail-btn').classList.add('shadow', 'bg-white', 'text-blue-600');
+                 loginCont.style.transform = 'translateX(0)';
+                 otpCont.style.transform = 'translateX(100%)';
+                 // simple height fix (approx)
+                 wrapper.style.minHeight = Math.max(loginCont.offsetHeight, 300) + 'px';
+             } else {
+                 document.getElementById('otp-mail-btn').classList.add('shadow', 'bg-white', 'text-blue-600');
+                 loginCont.style.transform = 'translateX(-100%)';
+                 otpCont.style.transform = 'translateX(0)';
+                 wrapper.style.minHeight = Math.max(otpCont.offsetHeight, 300) + 'px';
+             }
+        }
+        
+        async function getStock(key) {
+            const s = await getCountFromServer(query(collection(db, key), where("isSold", "==", false)));
+            return s.data().count;
+        }
+
+        async function loadMailStore() {
+             const configSnap = await getDoc(doc(db, "config", "main"));
+             const mails = configSnap.exists() ? configSnap.data().mails : [];
+             const loginM = mails.filter(m => !m.category || m.category === 'login');
+             const otpM = mails.filter(m => m.category === 'otp');
+             
+             // Helper Render
+             const render = async (list, elId) => {
+                 const el = document.getElementById(elId);
+                 if(list.length === 0) { el.innerHTML = `<div class="text-center p-10 text-gray-400">No items available</div>`; return; }
+                 
+                 el.innerHTML = `<div class="flex justify-center p-5"><div class="spinner"></div></div>`;
+                 
+                 // Fetch stocks parallel
+                 const stocks = await Promise.all(list.map(m => getStock(m.stockKey)));
+                 
+                 el.innerHTML = list.map((m, i) => {
+                     const stock = stocks[i];
+                     const isLow = stock > 0 && stock < 5;
+                     const isOut = stock === 0;
+                     
+                     return `<div class="card-bg p-4 rounded-xl flex flex-col gap-3">
+                         <div class="flex items-start justify-between">
+                             <div class="flex items-center gap-3">
+                                 <img src="${m.logoUrl}" class="w-10 h-10 rounded-lg shadow-sm">
+                                 <div>
+                                     <h4 class="font-bold text-gray-800">${m.type}</h4>
+                                     <div class="flex items-center gap-2">
+                                        <span class="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">${m.expirationHours ? m.expirationHours+'h val' : 'Lifetime'}</span>
+                                        ${stock > 0 ? `<span class="text-xs ${isLow ? 'text-orange-500' : 'text-green-600'} font-bold">${stock} In Stock</span>` : '<span class="text-xs text-red-500 font-bold">Out of Stock</span>'}
+                                     </div>
+                                 </div>
+                             </div>
+                             <p class="font-extrabold text-blue-600">৳${m.priceBdt}</p>
+                         </div>
+                         <button onclick="buyMail('${m.type}', ${m.priceBdt}, '${m.stockKey}')" ${isOut ? 'disabled' : ''} class="w-full py-2.5 rounded-lg font-bold text-sm ${isOut ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'btn-gradient'} transition transform active:scale-95">
+                            ${isOut ? 'Sold Out' : 'Buy Now'}
+                         </button>
+                     </div>`
+                 }).join('');
+             };
+             
              await Promise.all([
-                 renderMails(loginMails, loginContainer),
-                 renderMails(otpMails, otpContainer)
+                 render(loginM, 'login-mail-container'),
+                 render(otpM, 'otp-mail-container')
              ]);
              
-             // Adjust container height based on current view
-             switchMailView(document.getElementById('login-mail-btn').classList.contains('active') ? 'login' : 'otp');
+             loadMailHistory();
         }
 
-        async function renderMails(mails, container) {
-             if(!mails.length) { container.innerHTML = "<p class='text-center text-gray-400 mt-10'>No items available.</p>"; return; }
+        async function loadMailHistory() {
+             const list = document.getElementById('mail-purchase-history');
+             // Load last 10
+             const q = query(collection(db, "mail_purchases"), where("userId", "==", userData.tgChatId), orderBy("purchasedAt", "desc"), limit(20));
+             const snap = await getDocs(q);
              
-             // Get stocks
-             const stockProms = mails.map(m => getCountFromServer(query(collection(db, m.stockKey), where("isSold", "==", false))));
-             const stocks = await Promise.all(stockProms);
+             if(snap.empty) { list.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">No purchases yet</div>`; return; }
              
-             let html = "";
-             mails.forEach((m, i) => {
-                 const count = stocks[i].data().count;
-                 const price = parseFloat(m.priceBdt);
-                 const isDisabled = count === 0 || userData.balance < price;
+             list.innerHTML = snap.docs.map(d => {
+                 const p = {id: d.id, ...d.data()};
+                 if(p.isRefunded) return ''; // Skip refunded
+                 const date = p.purchasedAt.toDate().toLocaleString();
+                 const passDisplay = p.password ? `<span class="font-mono bg-gray-50 px-1">${p.password}</span>` : 'N/A';
                  
-                 html += `
-                 <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm relative overflow-hidden">
+                 // Report Btn Logic
+                 const reportBtn = `<button onclick="openReportModal('${p.id}', '${p.mailType}', '${p.cost}', '${p.saleId}')" class="text-xs text-orange-500 underline flex items-center gap-1"><i data-lucide="flag" class="w-3 h-3"></i> Report</button>`;
+                 
+                 return `<div class="card-bg p-3 rounded-lg border-l-4 border-blue-500 space-y-2">
                      <div class="flex justify-between items-start">
-                         <div class="flex items-center gap-3">
-                              <img src="${m.logoUrl || 'https://via.placeholder.com/40'}" class="w-10 h-10 rounded-lg object-contain bg-gray-50 p-1">
-                              <div>
-                                  <h4 class="font-bold text-gray-800">${m.type}</h4>
-                                  <p class="text-xs text-gray-400">Validity: ${m.expirationHours||24}h</p>
-                              </div>
+                         <div>
+                            <p class="font-bold text-gray-800 text-sm">${p.mailType}</p>
+                            <p class="text-[10px] text-gray-400">${date}</p>
                          </div>
-                         <div class="text-right">
-                             <p class="text-blue-600 font-bold text-lg">৳${price}</p>
-                             <p class="${count>0 ? 'text-green-500':'text-red-500'} text-xs font-semibold">${count > 0 ? count + ' In Stock' : 'Stock Out'}</p>
-                         </div>
+                         <span class="text-xs font-mono bg-blue-50 text-blue-600 px-1 rounded">ID:${p.saleId||'NA'}</span>
                      </div>
-                     <button onclick="buyMail('${m.type}', ${price}, '${m.stockKey}')" ${isDisabled?'disabled':''} class="w-full mt-4 py-2.5 rounded-lg font-bold text-sm ${isDisabled ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'btn-gradient text-white shadow-lg active:scale-95'}">
-                         ${count === 0 ? 'Out of Stock' : (userData.balance < price ? 'Insufficient Balance' : 'BUY NOW')}
-                     </button>
+                     <div class="space-y-1 bg-gray-50 p-2 rounded text-sm text-gray-700">
+                         <div class="flex justify-between"><span class="truncate font-mono select-all w-48">${p.mail}</span><i onclick="copyToClipboard('${p.mail}', this)" data-lucide="copy" class="w-4 h-4 cursor-pointer text-gray-400"></i></div>
+                         <div class="flex justify-between"><span>Pass: ${passDisplay}</span><i onclick="copyToClipboard('${p.password||''}', this)" data-lucide="copy" class="w-4 h-4 cursor-pointer text-gray-400"></i></div>
+                     </div>
+                     <div class="flex justify-end pt-1 gap-3">
+                         ${reportBtn}
+                     </div>
                  </div>`;
-             });
-             container.innerHTML = html;
+             }).join('');
              lucide.createIcons();
         }
 
-        function switchMailView(view) {
-             const c1 = document.getElementById('login-mail-container');
-             const c2 = document.getElementById('otp-mail-container');
-             const b1 = document.getElementById('login-mail-btn');
-             const b2 = document.getElementById('otp-mail-btn');
+        // --- BUY FUNCTION ---
+        window.buyMail = async (type, price, stockKey) => {
+             if(userData.balance < price) { showAlert("Insufficient Balance. Please Deposit."); navigateTo('pay-page'); return; }
+             if(!confirm(`Buy ${type} for ৳${price}?`)) return;
              
-             if(view === 'login') {
-                 c1.style.transform = "translateX(0)";
-                 c2.style.transform = "translateX(100%)";
-                 b1.classList.add('active'); b2.classList.remove('active');
-                 adjustHeight(c1);
-             } else {
-                 c1.style.transform = "translateX(-100%)";
-                 c2.style.transform = "translateX(0)";
-                 b1.classList.remove('active'); b2.classList.add('active');
-                 adjustHeight(c2);
+             loader.style.display = 'flex'; loader.style.opacity = '1'; loaderStatus.innerText = "Processing Transaction...";
+             
+             try {
+                 await runTransaction(db, async(t) => {
+                     // Get One unsold
+                     const q = query(collection(db, stockKey), where("isSold", "==", false), limit(1));
+                     const docs = await getDocs(q);
+                     if(docs.empty) throw "Stock Ended just now.";
+                     
+                     const item = docs.docs[0];
+                     const userRef = doc(db, "users", userData.tgChatId);
+                     const counterRef = doc(db, "counters", "mail_purchase");
+                     
+                     const uSnap = await t.get(userRef);
+                     if(uSnap.data().balance < price) throw "Balance low.";
+                     const cSnap = await t.get(counterRef);
+                     const saleId = cSnap.exists() ? cSnap.data().currentId + 1 : 1001;
+                     
+                     t.update(userRef, { balance: uSnap.data().balance - price });
+                     t.update(item.ref, { isSold: true, soldTo: userData.tgChatId });
+                     
+                     if(cSnap.exists()) t.update(counterRef, { currentId: saleId });
+                     else t.set(counterRef, { currentId: saleId });
+                     
+                     // Create Record
+                     const newRec = doc(collection(db, "mail_purchases"));
+                     t.set(newRec, {
+                         userId: userData.tgChatId, mailType: type, cost: price,
+                         mail: item.data().email, password: item.data().password, 
+                         purchasedAt: serverTimestamp(), saleId: saleId, isRefunded: false
+                     });
+                 });
+                 
+                 showAlert("Purchase Successful!");
+                 updateUI();
+                 // Show success modal content (fetch last)
+                 const lq = query(collection(db, "mail_purchases"), where("userId", "==", userData.tgChatId), orderBy("purchasedAt", "desc"), limit(1));
+                 const lsnap = await getDocs(lq);
+                 const data = lsnap.docs[0].data();
+                 
+                 document.getElementById('purchase-success-email').innerText = data.mail;
+                 document.getElementById('purchase-success-password').innerText = data.password;
+                 document.getElementById('purchase-success-modal').classList.remove('hidden');
+                 
+                 loadMailStore();
+             } catch(e) {
+                 showAlert(typeof e === 'string' ? e : "Transaction Failed.");
+             } finally {
+                 loader.style.display = 'none';
              }
         }
-        function adjustHeight(el) {
-             setTimeout(() => {
-                document.getElementById('mail-views-container').style.height = (el.offsetHeight + 20) + "px";
-             }, 50); // slight delay for rendering
-        }
 
-        window.buyMail = async (type, cost, key) => {
-             if(!confirm(`Buy ${type} for ৳${cost}?`)) return;
-             // Basic buy logic for single file...
-             loader.style.display = 'flex'; loader.style.opacity = 1;
-             try {
-                 await runTransaction(db, async (txn) => {
-                     const stockQ = query(collection(db, key), where("isSold", "==", false), limit(1));
-                     const stockDocs = await getDocs(stockQ); // Docs need read inside transaction for robust apps but fine here
-                     if(stockDocs.empty) throw "Stock unavailable!";
-                     const mailDoc = stockDocs.docs[0];
-                     
-                     const userD = await txn.get(doc(db, "users", userData.tgChatId));
-                     if(userD.data().balance < cost) throw "Balance too low!";
-                     
-                     txn.update(userD.ref, { balance: increment(-cost) });
-                     txn.update(mailDoc.ref, { isSold: true, soldTo: userData.tgChatId, soldAt: serverTimestamp() });
-                     txn.set(doc(collection(db, "mail_purchases")), {
-                         userId: userData.tgChatId, mailType: type, mail: mailDoc.data().email, 
-                         password: mailDoc.data().password, purchasedAt: serverTimestamp(), cost: cost
-                     });
-                     
-                     // Show success modal content
-                     document.getElementById('suc-email').innerText = mailDoc.data().email;
-                     document.getElementById('suc-pass').innerText = mailDoc.data().password || "N/A";
-                 });
-                 document.getElementById('purchase-success-modal').classList.remove('hidden');
-                 loadMailStore();
-             } catch(e) { alert(e); }
-             loader.style.opacity = 0; setTimeout(()=>loader.style.display='none', 300);
+        // --- DEPOSIT & PAYMENTS ---
+        async function loadPaymentHistory() {
+            const el = document.getElementById('payment-history-list');
+            const q = query(collection(db, "deposits"), where("userId", "==", userData.tgChatId), orderBy("requestedAt", "desc"), limit(5));
+            const s = await getDocs(q);
+            if(s.empty) { el.innerHTML = `<div class="text-center text-gray-400 text-xs">No recent deposits</div>`; return; }
+            el.innerHTML = s.docs.map(d => {
+                const i = d.data();
+                const colors = {pending: 'text-orange-500', approved: 'text-green-600', rejected: 'text-red-500'};
+                return `<div class="flex justify-between items-center p-3 bg-white rounded-lg shadow-sm border border-gray-100">
+                    <div><p class="font-bold text-gray-700 text-sm">${i.method}</p><p class="text-[10px] text-gray-400">${i.requestedAt?.toDate().toLocaleDateString()}</p></div>
+                    <div class="text-right"><p class="font-bold text-gray-800">৳${i.amount}</p><p class="text-[10px] font-bold uppercase ${colors[i.status]||'text-gray-500'}">${i.status}</p></div>
+                </div>`;
+            }).join('');
         }
-
+        
         async function handleDeposit() {
-             const m = document.getElementById('deposit-method').value;
-             const a = parseInt(document.getElementById('deposit-amount').value);
-             const s = document.getElementById('sender-number').value;
-             const t = document.getElementById('deposit-txid').value;
-             
-             if(!a || !s || !t) return alert("Fill all fields");
-             
-             await addDoc(collection(db, "deposits"), {
-                 userId: userData.tgChatId, userName: userData.name, 
-                 method: m, amount: a, senderNumber: s, transactionId: t, status: "pending", requestedAt: serverTimestamp()
-             });
-             alert("Deposit Request Submitted!");
-             document.getElementById('deposit-txid').value = "";
-             loadPaymentHistory();
+            const method = document.getElementById('deposit-method').value;
+            const amt = Number(document.getElementById('deposit-amount').value);
+            const num = document.getElementById('sender-number').value;
+            const tid = document.getElementById('deposit-txid').value;
+            
+            if(!method || !amt || !num || !tid) { showAlert("Please fill all fields."); return; }
+            
+            try {
+                // Check dup
+                const dup = await getDocs(query(collection(db, "deposits"), where("transactionId", "==", tid)));
+                if(!dup.empty) throw "Transaction ID already used.";
+                
+                await addDoc(collection(db, "deposits"), {
+                    userId: userData.tgChatId, userName: userData.name, 
+                    amount: amt, method: method, senderNumber: num, transactionId: tid,
+                    status: "pending", requestedAt: serverTimestamp()
+                });
+                showAlert("Deposit Request Submitted!");
+                document.getElementById('deposit-txid').value = "";
+                loadPaymentHistory();
+            } catch(e) { showAlert(e); }
         }
 
-        async function loadNotifications() {
-             const cont = document.getElementById('notification-list');
-             cont.innerHTML = "<p class='text-center p-4 text-gray-400'>Checking updates...</p>";
-             const q = query(collection(db, "notifications"), orderBy("createdAt", "desc"), limit(10));
-             const sn = await getDocs(q);
-             let h = "";
-             sn.forEach(d => {
-                 const n = d.data();
-                 const isForMe = !n.recipientId || n.recipientId === userData.tgChatId;
-                 if(isForMe) {
-                     h += `<div class="bg-gray-50 p-4 rounded-xl border border-gray-100"><h4 class="font-bold text-gray-800">${n.title}</h4><p class="text-sm text-gray-600 mt-1">${n.message}</p><p class="text-[10px] text-gray-400 mt-2 text-right">${n.createdAt?.toDate().toLocaleDateString()}</p></div>`;
-                 }
-             });
-             cont.innerHTML = h || "<div class='text-center pt-20'><i data-lucide='bell-off' class='w-12 h-12 text-gray-300 mx-auto'></i><p class='text-gray-400 mt-2'>No notifications</p></div>";
-             lucide.createIcons();
+        // --- MISC FEATURES ---
+        async function loadSupportMenu() {
+            // Static example as logic implies Firestore
+            const list = document.getElementById('support-channels-list');
+            const q = query(collection(db, "support_channels"), orderBy("order"));
+            const s = await getDocs(q);
+            if(s.empty) {
+                 // Fallback
+                 list.innerHTML = `<a href="${CHANNEL_INVITE_LINK}" target="_blank" class="block p-3 bg-white mb-2 rounded shadow-sm font-bold text-center text-blue-600">Official Channel</a>`;
+                 return;
+            }
+            list.innerHTML = s.docs.map(d => {
+                const i = d.data();
+                return `<a href="${i.link}" target="_blank" class="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-100 mb-2 hover:bg-gray-50"><img src="${i.iconUrl}" class="w-6 h-6 rounded"> <span class="text-sm font-bold text-gray-700">${i.name}</span></a>`;
+            }).join('');
         }
 
-        function populateAdminMailTypes() {
-            const s = document.getElementById('mail-type-select');
-            s.innerHTML = appConfig.mails.map(m => `<option value="${m.stockKey}">${m.type}</option>`).join('');
+        async function loadUpdates() {
+            const el = document.getElementById('updates-content');
+            const s = await getDocs(query(collection(db, "updates"), orderBy("createdAt", "desc"), limit(3)));
+            if(s.empty) { el.innerHTML = `<p class="text-gray-400 text-center">No updates.</p>`; return; }
+            el.innerHTML = s.docs.map(d => {
+                const u = d.data();
+                return `<div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-3">
+                    ${u.imageUrl ? `<img src="${u.imageUrl}" class="w-full h-32 object-cover">` : ''}
+                    <div class="p-3">
+                        <h4 class="font-bold text-gray-800">${u.title}</h4>
+                        <p class="text-gray-600 text-sm mt-1 whitespace-pre-wrap">${u.content}</p>
+                    </div>
+                </div>`
+            }).join('');
+        }
+
+        window.openReportModal = (id, type, cost, sale) => {
+             document.getElementById('report-purchase-id').value = id;
+             document.getElementById('report-purchase-cost').value = cost;
+             document.getElementById('report-purchase-saleId').value = sale;
+             document.getElementById('report-modal-mail-type').innerText = `${type} #${sale}`;
+             document.getElementById('report-issue-modal').classList.remove('hidden');
+        }
+
+        async function handleReportSubmit(e) {
+            e.preventDefault();
+            const pid = document.getElementById('report-purchase-id').value;
+            try {
+                 const chk = await getDocs(query(collection(db, "replace_requests"), where("purchaseId", "==", pid)));
+                 if(!chk.empty) throw "Already reported this item.";
+                 
+                 await addDoc(collection(db, "replace_requests"), {
+                     userId: userData.tgChatId, userName: userData.name,
+                     purchaseId: pid, saleId: document.getElementById('report-purchase-saleId').value,
+                     cost: Number(document.getElementById('report-purchase-cost').value),
+                     reason: document.getElementById('report-reason').value,
+                     proof: document.getElementById('report-proof').value,
+                     status: 'pending', requestedAt: serverTimestamp()
+                 });
+                 showAlert("Report Submitted to Admin.");
+                 document.getElementById('report-issue-modal').classList.add('hidden');
+            } catch(er) { showAlert(er); }
+        }
+
+        async function loadAdminData() {
+             const list = document.getElementById('replace-requests-list');
+             const q = query(collection(db, "replace_requests"), where("status", "==", "pending"));
+             const s = await getDocs(q);
+             if(s.empty) { list.innerHTML="<p>No Pending Requests</p>"; return;}
+             list.innerHTML = s.docs.map(d => {
+                 const r = {id: d.id, ...d.data()};
+                 return `<div class="bg-white p-3 rounded shadow text-sm space-y-2">
+                     <p><strong>${r.userName}</strong> reported <strong>#${r.saleId}</strong></p>
+                     <p class="text-gray-500">${r.reason}</p>
+                     ${r.proof ? `<a href="${r.proof}" target="_blank" class="text-blue-500">Proof</a>` : ''}
+                     <div class="flex gap-2">
+                         <button onclick="resolveReq('${r.id}', 'rejected', '${r.userId}')" class="bg-red-500 text-white px-2 py-1 rounded">Reject</button>
+                         <button onclick="resolveReq('${r.id}', 'approved', '${r.userId}', ${r.cost}, '${r.purchaseId}')" class="bg-green-500 text-white px-2 py-1 rounded">Refund</button>
+                     </div>
+                 </div>`;
+             }).join('');
+             
+             // populate types
+             const sel = document.getElementById('mail-type-select');
+             sel.innerHTML = appConfig.mails.map(m => `<option value="${m.stockKey}">${m.type}</option>`).join('');
         }
         
         async function handleAddMails() {
             const key = document.getElementById('mail-type-select').value;
-            const text = document.getElementById('mail-data-textarea').value;
-            if(!text) return;
-            const lines = text.split('\n');
+            const data = document.getElementById('mail-data-textarea').value.trim();
+            if(!key || !data) return;
+            const lines = data.split('\n');
             const batch = writeBatch(db);
-            let count = 0;
+            let c=0;
             lines.forEach(l => {
-                const [e, p] = l.split('/');
-                if(e && p) {
-                    batch.set(doc(collection(db, key)), { email: e, password: p, isSold: false, createdAt: serverTimestamp() });
-                    count++;
+                const [e, p] = l.split('/'); // simple parser
+                if(e) {
+                    batch.set(doc(collection(db, key)), { email: e, password: p||null, isSold: false, createdAt: serverTimestamp() });
+                    c++;
                 }
             });
             await batch.commit();
-            alert(`${count} mails added!`);
+            showAlert(`Added ${c} mails.`);
+            document.getElementById('mail-data-textarea').value = "";
         }
 
-        async function loadSupportChannels() {
-             const div = document.getElementById('support-channels-list');
-             if(div.childElementCount > 0) return;
-             const snap = await getDocs(collection(db, "support_channels"));
-             let h = "";
-             snap.forEach(d => {
-                 const s = d.data();
-                 h += `<a href="${s.link}" target="_blank" class="flex items-center gap-3 p-3 bg-white border rounded-lg hover:shadow-md transition"><img src="${s.iconUrl}" class="w-6 h-6 rounded"> <span class="font-medium text-sm text-gray-700">${s.name}</span></a>`;
-             });
-             div.innerHTML = h;
+        // --- GLOBAL HELPERS ---
+        window.resolveReq = async (rid, status, uid, cost=0, pid='') => {
+            if(!confirm("Proceed?")) return;
+            await updateDoc(doc(db, "replace_requests", rid), { status: status, resolvedAt: serverTimestamp() });
+            if(status === 'approved') {
+                 await updateDoc(doc(db, "users", uid), { balance: increment(cost) });
+                 await updateDoc(doc(db, "mail_purchases", pid), { isRefunded: true });
+            }
+            loadAdminData();
         }
 
-        async function loadPaymentHistory() {
-             const d = document.getElementById('payment-history-list');
-             const s = await getDocs(query(collection(db, "deposits"), where("userId","==", userData.tgChatId), orderBy("requestedAt", "desc"), limit(5)));
-             let html = "";
-             s.forEach(doc => {
-                 const t = doc.data();
-                 let color = "text-yellow-600";
-                 if(t.status==='approved') color="text-green-600";
-                 if(t.status==='rejected') color="text-red-600";
-                 html += `<div class="bg-gray-50 p-3 rounded-lg flex justify-between items-center"><div><p class="font-bold text-sm text-gray-800">${t.method}</p><p class="text-xs text-gray-400">${t.transactionId}</p></div><div class="text-right"><p class="font-bold text-sm">৳${t.amount}</p><p class="text-[10px] uppercase font-bold ${color}">${t.status}</p></div></div>`
-             });
-             d.innerHTML = html || "<p class='text-gray-400 text-center text-sm'>No history</p>";
+        window.copyToClipboard = (text, el) => {
+             navigator.clipboard.writeText(text);
+             if(el) { 
+                 const og = el.innerHTML;
+                 el.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-green-500"></i>`;
+                 lucide.createIcons();
+                 setTimeout(()=> { el.innerHTML=og; lucide.createIcons(); }, 1500);
+             } else showAlert("Copied!");
         }
         
-        // Utils
-        window.copyToClipboard = (txt) => { navigator.clipboard.writeText(txt); alert("Copied!"); };
-        function loadUpdates() { /* Keep banner functionality logic here if needed or use static */ setupBanner(); }
-        function setupBanner() { 
+        window.showAlert = (msg) => {
+             document.getElementById('alert-message').innerText = msg;
+             document.getElementById('custom-alert').classList.remove('hidden');
+        }
+        
+        async function handleCopyHistory() {
+             const fourHoursAgo = Timestamp.fromDate(new Date(Date.now() - 4 * 60 * 60 * 1000));
+             const q = query(collection(db, "mail_purchases"), where("userId", "==", userData.tgChatId), where("purchasedAt", ">=", fourHoursAgo));
+             const s = await getDocs(q);
+             const txt = s.docs.map(d => {const p=d.data(); return `${p.mail}/${p.password}`}).join('\n');
+             copyToClipboard(txt);
+        }
+
+        async function handleSendMoney() {
+            const rec = document.getElementById('send-recipient-id').value;
+            const amt = Number(document.getElementById('send-amount').value);
+            if(userData.balance < amt*1.05 || amt < 20) { showAlert("Check Balance or Amount."); return;}
+            try {
+                 // simplified check
+                 const recSnap = await getDoc(doc(db, "users", rec));
+                 if(!recSnap.exists()) throw "User not found";
+                 await runTransaction(db, async(t)=>{
+                     t.update(doc(db,"users", userData.tgChatId), {balance: userData.balance - amt*1.05});
+                     t.update(doc(db,"users", rec), {balance: increment(amt)});
+                     // log...
+                 });
+                 showAlert("Sent!");
+            } catch(e) { showAlert("Failed."); }
+        }
+
+        function setupBanner() {
             let idx = 0; const slides = document.querySelectorAll('.slide');
-            if(!slides.length) return;
+            const cont = document.getElementById('slides');
             setInterval(() => {
-                slides.forEach(s => s.style.transform = `translateX(-${idx * 100}%)`);
                 idx = (idx + 1) % slides.length;
+                cont.style.transform = `translateX(-${idx * 100}%)`;
             }, 3000);
         }
 
+        async function loadTutorials() {
+            const list = document.getElementById('tutorial-list');
+            // Assuming tutorials collection
+             const q = query(collection(db, "tutorials"), orderBy("order"));
+             const s = await getDocs(q);
+             if(s.empty) return;
+             list.innerHTML = s.docs.map(d => `<div class="bg-white rounded p-3 mb-2 shadow"><a href="${d.data().url}" target="_blank" class="font-bold text-blue-600 block">${d.data().title}</a></div>`).join('');
+        }
     </script>
 </body>
 </html>
