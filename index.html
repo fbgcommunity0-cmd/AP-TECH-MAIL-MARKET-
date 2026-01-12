@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>𝐌𝐀𝐈𝐋 𝐌𝐀𝐑𝐊𝐄𝐓</title>
+    <title>🅐🅟 𝗧𝗘𝗖𝗛 ⚡ 𝗠𝗔𝗥𝗞𝗘𝗧 🛍️</title>
 
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -285,6 +285,38 @@
             top: 0;
             left: 0;
         }
+        
+        /* --- NEW: Profile Mode Switcher --- */
+        .profile-mode-switcher {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background-color: #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 0.25rem;
+            position: relative;
+        }
+        .profile-mode-switcher button {
+            padding: 0.5rem;
+            border-radius: 0.6rem;
+            font-weight: 600;
+            color: #4b5563;
+            transition: color 0.3s ease;
+            border: none;
+            background-color: transparent;
+            z-index: 2;
+        }
+        .profile-mode-switcher .glider {
+            position: absolute;
+            height: calc(100% - 0.5rem);
+            width: calc(50% - 0.25rem);
+            background-color: #ffffff;
+            border-radius: 0.6rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            top: 0.25rem;
+            left: 0.25rem;
+            z-index: 1;
+        }
 
     </style>
 </head>
@@ -309,7 +341,7 @@
         <nav id="support-channels-list" class="flex-grow overflow-y-auto">
             </nav>
         <div class="p-4 text-center text-xs text-gray-400 border-t">
-            𝐌𝐀𝐈𝐋 𝐌𝐀𝐑𝐊𝐄𝐓 &copy; 2025
+            🅐🅟 𝗧𝗘𝗖𝗛 ⚡ 𝗠𝗔𝗥𝗞𝗘𝗧 🛍️ &copy; 2025
         </div>
     </aside>
     <div id="app-container" class="min-h-screen flex-col main-page">
@@ -456,7 +488,8 @@
                     <div class="mt-8">
                         <div class="flex justify-between items-center mb-3">
                             <h3 class="text-lg font-semibold">Buy History</h3>
-                            <div class="flex items-center gap-2">
+                            <div id="history-action-buttons" class="flex items-center gap-2">
+                               <button id="copy-all-history-btn" class="btn-outline-accent p-2 rounded-lg text-sm flex items-center gap-1 hidden"><i data-lucide="copy-check" class="w-4 h-4"></i><span>Copy All</span></button>
                                <button id="copy-history-btn" class="btn-outline-accent p-2 rounded-lg text-sm flex items-center gap-1"><i data-lucide="copy" class="w-4 h-4"></i><span>Copy</span></button>
                                <button id="download-history-btn" class="btn-outline-accent p-2 rounded-lg text-sm flex items-center gap-1"><i data-lucide="download" class="w-4 h-4"></i><span>Download</span></button>
                             </div>
@@ -486,7 +519,8 @@
                 <p class="text-sm text-gray-600 text-center">নিচের তালিকা থেকে আপনার প্রয়োজনীয় ভিডিওটি দেখুন।</p>
                 <div id="tutorial-list" class="space-y-5"></div>
             </div>
-
+            
+            <!-- =========== [UPDATED] PROFILE PAGE =========== -->
             <div id="profile-page" class="p-4 space-y-6 sub-page">
                 <div class="card-bg p-6 rounded-2xl flex flex-col items-center text-center">
                     <div class="relative mb-4">
@@ -499,8 +533,18 @@
                 </div>
 
                 <div class="space-y-3">
+                    <button id="bot-setting-btn" class="w-full card-bg p-4 rounded-xl flex justify-between items-center text-left text-lg font-semibold">
+                        <span class="flex items-center gap-3">
+                           <i data-lucide="sliders-horizontal" class="w-6 h-6 text-gray-600"></i>
+                           <span>BOT SETTING</span>
+                        </span>
+                        <i data-lucide="arrow-right" class="w-5 h-5 text-gray-400"></i>
+                    </button>
                     <button id="more-features-btn" class="w-full card-bg p-4 rounded-xl flex justify-between items-center text-left text-lg font-semibold">
-                        <span>⚡ More Features</span>
+                        <span class="flex items-center gap-3">
+                           <i data-lucide="zap" class="w-6 h-6 text-gray-600"></i>
+                           <span>More Features</span>
+                        </span>
                         <i data-lucide="arrow-right" class="w-5 h-5 text-gray-400"></i>
                     </button>
                     <button id="go-to-support-btn" class="w-full card-bg p-4 rounded-xl flex justify-between items-center text-left text-lg font-semibold">
@@ -512,11 +556,41 @@
                     </button>
                 </div>
 
-
                 <div class="text-center pt-6">
                      <p class="text-center text-gray-600 text-sm">Developed by <a href="https://t.me/bd_Storebot/Botshop" target="_blank" class="font-semibold text-[#007bff] hover:underline">𝐁𝐃 𝐒𝐓𝐎𝐑𝐄</a></p>
                 </div>
             </div>
+
+            <!-- =========== [NEW] BOT SETTING PAGE =========== -->
+            <div id="bot-setting-page" class="p-4 space-y-6 sub-page">
+                 <div class="relative flex items-center justify-center mb-4">
+                    <button onclick="navigateTo('profile-page')" class="absolute left-0 p-2 rounded-full hover:bg-gray-100 transition-colors">
+                        <i data-lucide="arrow-left" class="w-6 h-6 text-gray-700"></i>
+                    </button>
+                    <h2 class="text-xl font-bold text-center text-gray-800">Bot Setting</h2>
+                </div>
+
+                <div class="card-bg p-4 rounded-xl">
+                    <label class="block text-sm font-medium text-gray-600 mb-2 text-center">Profile Mode</label>
+                    <div class="profile-mode-switcher">
+                        <span class="glider"></span>
+                        <button id="personal-mode-btn">Personal</button>
+                        <button id="business-mode-btn">Business</button>
+                    </div>
+                </div>
+
+                <div id="business-mode-rules" class="card-bg p-5 rounded-xl space-y-3 bg-blue-50 border-blue-200">
+                    <h3 class="font-bold text-lg text-gray-800 flex items-center gap-2"><i data-lucide="info" class="w-5 h-5 text-blue-600"></i>Business Mode Rules</h3>
+                    <ul class="list-disc list-inside text-gray-700 text-sm space-y-2">
+                        <li>বিজনেস মোড চালু করতে আপনার অ্যাকাউন্টে কমপক্ষে <span class="font-bold text-blue-600">৳80</span> থাকতে হবে।</li>
+                        <li>এই মোড فعال রাখতে, আপনাকে প্রতিদিন কমপক্ষে <span class="font-bold text-blue-600">৳20</span> মূল্যের মেইল কিনতে হবে।</li>
+                        <li>যদি একদিনও ৳20-র কেনাকাটা না করেন, তবে আপনার অ্যাকাউন্ট থেকে <span class="font-bold text-red-600">৳5</span> কেটে নেওয়া হবে এবং মোড স্বয়ংক্রিয়ভাবে পার্সোনাল হয়ে যাবে।</li>
+                        <li>বিজনেস মোডে আপনি একসাথে সব হিস্ট্রি কপি করার মতো বিশেষ সুবিধা পাবেন।</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- =========== END OF BOT SETTING PAGE =========== -->
+
 
             <div id="features-page" class="p-4 space-y-8 sub-page">
                 <div class="grid grid-cols-2 gap-4 text-center">
@@ -711,6 +785,25 @@
             <button id="purchase-success-buy-again-btn" class="w-full p-3 rounded-lg btn-gradient mt-4">আবার কিনুন</button>
         </div>
     </div>
+
+    <!-- NEW: Bulk Purchase Success Modal -->
+    <div id="bulk-purchase-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
+        <div class="card-bg rounded-2xl p-6 w-full max-w-md space-y-4 relative">
+             <button id="close-bulk-purchase-modal" class="modal-close-btn"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <i data-lucide="check-circle-2" class="w-12 h-12 text-green-500 mx-auto"></i>
+            <h3 class="text-xl font-bold text-gray-800 text-center">Bulk Purchase Successful!</h3>
+            <p id="bulk-purchase-summary" class="text-sm text-gray-600 text-center"></p>
+
+            <div id="bulk-purchase-list" class="max-h-60 overflow-y-auto bg-gray-50 p-3 rounded-lg space-y-2 border">
+                <!-- Purchased mails will be listed here -->
+            </div>
+            
+            <button id="download-bulk-xlsx-btn" class="w-full p-3 rounded-lg btn-gradient mt-4 flex items-center justify-center gap-2">
+                <i data-lucide="download" class="w-5 h-5"></i>
+                <span>Download as XLSX</span>
+            </button>
+        </div>
+    </div>
     
     <!-- [UPDATED] Report Issue Modal -->
     <div id="report-issue-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
@@ -752,15 +845,15 @@
     <script type="module">
         const ADMIN_UID = "6954647230";
         // --- UPDATED FIREBASE CONFIG ---
-const firebaseConfig = {
-  apiKey: "AIzaSyClz7XBgYHuiF70711CSb6DzDULzN4Okc8",
-  authDomain: "tech-mail-market.firebaseapp.com",
-  databaseURL: "https://tech-mail-market-default-rtdb.firebaseio.com",
-  projectId: "tech-mail-market",
-  storageBucket: "tech-mail-market.firebasestorage.app",
-  messagingSenderId: "28333491796",
-  appId: "1:28333491796:web:caa5daa598b72550830fc1"
-};
+        const firebaseConfig = {
+          apiKey: "AIzaSyClz7XBgYHuiF70711CSb6DzDULzN4Okc8",
+          authDomain: "tech-mail-market.firebaseapp.com",
+          databaseURL: "https://tech-mail-market-default-rtdb.firebaseio.com",
+          projectId: "tech-mail-market",
+          storageBucket: "tech-mail-market.firebasestorage.app",
+          messagingSenderId: "28333491796",
+          appId: "1:28333491796:web:caa5daa598b72550830fc1"
+        };
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
         import { getFirestore, doc, setDoc, getDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit, runTransaction, getCountFromServer, writeBatch, updateDoc, Timestamp, onSnapshot, arrayUnion, arrayRemove, increment } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
@@ -772,10 +865,19 @@ const firebaseConfig = {
         let appConfig = {};
         let insufficientBalanceInterval = null;
         let countdownInterval = null;
-
+        let currentProfileMode = 'personal'; 
+        
         const loader = document.getElementById('loader');
 
         const getLoadingHTML = () => `<div class="loading-container"><div class="premium-loader-spinner"></div></div>`;
+
+        function getTodayDateString() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
 
         window.onload = async () => {
             cycleReviewsOnLoader();
@@ -825,7 +927,6 @@ const firebaseConfig = {
             }, 4000);
         }
         
-        // [UPDATED] User session initialization with unblocking logic
         async function initUserSession() {
             if (!currentUserTg) {
                 showAlert("Telegram user data is missing. Cannot proceed.");
@@ -838,7 +939,6 @@ const firebaseConfig = {
             if (userSnap.exists()) {
                 userData = userSnap.data();
                 
-                // Check if user is currently blocked and if the block has expired
                 if (userData.isBlocked && userData.blockedUntil && userData.blockedUntil.toMillis() < Date.now()) {
                     await updateDoc(userRef, {
                         isBlocked: false,
@@ -847,7 +947,6 @@ const firebaseConfig = {
                         photo_url: currentUserTg.photo_url || null,
                         lastSeen: serverTimestamp()
                     });
-                    // Re-fetch user data after unblocking
                     userSnap = await getDoc(userRef);
                     userData = userSnap.data();
                 } else {
@@ -869,13 +968,18 @@ const firebaseConfig = {
                     balance: 0,
                     createdAt: serverTimestamp(),
                     isBlocked: false,
-                    blockedUntil: null, // For timed blocks
-                    dailyRejections: { date: new Date().toISOString().slice(0, 10), count: 0 }, // For tracking rejected reports
+                    blockedUntil: null,
+                    dailyRejections: { date: new Date().toISOString().slice(0, 10), count: 0 },
                     lastSeenNotification: null,
                     linkedUsers: [], 
                     linkedBy: null, 
                     teamSpending: {},
-                    lastSeen: serverTimestamp()
+                    lastSeen: serverTimestamp(),
+                    profileMode: 'personal',
+                    businessModeData: {
+                        lastPurchaseDate: null,
+                        dailyPurchaseTotal: 0
+                    }
                 };
                 await setDoc(userRef, userData);
             }
@@ -885,6 +989,9 @@ const firebaseConfig = {
                 showAlert(`আপনার অ্যাকাউন্ট ব্লক করা হয়েছে।${remainingTime ? ` এটি ${remainingTime} ঘন্টা পর খুলবে।` : ''}`);
                 return;
             }
+            
+            await checkBusinessModeStatus();
+            currentProfileMode = userData.profileMode || 'personal';
 
             await fetchAppConfig();
             if (tgChatId === ADMIN_UID) {
@@ -893,9 +1000,65 @@ const firebaseConfig = {
 
             loadSupportMenu();
             updateUI();
+            updateProfileSwitcherUI();
             listenForNotifications();
             showMainPage('app-container');
             navigateTo('home-page');
+        }
+
+        async function checkBusinessModeStatus() {
+            if (userData.profileMode !== 'business') return;
+
+            const todayStr = getTodayDateString();
+            const businessData = userData.businessModeData || { lastPurchaseDate: null, dailyPurchaseTotal: 0 };
+            const lastPurchaseDate = businessData.lastPurchaseDate;
+
+            // If there's a last purchase date and it's not today (i.e., it's a past day)
+            if (lastPurchaseDate && lastPurchaseDate !== todayStr) {
+                if (businessData.dailyPurchaseTotal < 20) {
+                    // Apply penalty
+                    const penalty = 5;
+                    if (userData.balance >= penalty) {
+                         const userRef = doc(db, "users", userData.tgChatId);
+                         await runTransaction(db, async (transaction) => {
+                             transaction.update(userRef, {
+                                 balance: increment(-penalty),
+                                 profileMode: 'personal',
+                                 'businessModeData.dailyPurchaseTotal': 0,
+                                 'businessModeData.lastPurchaseDate': todayStr
+                             });
+                         });
+                         userData.balance -= penalty;
+                         userData.profileMode = 'personal';
+                         showAlert(`আপনি গতকাল বিজনেস মোডের জন্য প্রয়োজনীয় ৳20 কেনাকাটা করেননি। ৳5 জরিমানা করা হয়েছে এবং আপনার মোড পার্সোনাল করা হয়েছে।`);
+                    } else {
+                         // Not enough balance for penalty, just switch mode
+                         const userRef = doc(db, "users", userData.tgChatId);
+                         await updateDoc(userRef, {
+                             profileMode: 'personal',
+                             'businessModeData.dailyPurchaseTotal': 0,
+                             'businessModeData.lastPurchaseDate': todayStr
+                         });
+                         userData.profileMode = 'personal';
+                         showAlert(`আপনি গতকাল বিজনেস মোডের জন্য প্রয়োজনীয় ৳20 কেনাকাটা করেননি। আপনার মোড পার্সোনাল করা হয়েছে।`);
+                    }
+                } else {
+                    // Requirement met, just reset for the new day
+                    const userRef = doc(db, "users", userData.tgChatId);
+                    await updateDoc(userRef, {
+                        'businessModeData.dailyPurchaseTotal': 0,
+                        'businessModeData.lastPurchaseDate': todayStr
+                    });
+                }
+                 // Re-fetch data to be sure
+                const userSnap = await getDoc(doc(db, "users", userData.tgChatId));
+                userData = userSnap.data();
+            } else if (!lastPurchaseDate) {
+                 // First day in business mode, set the date
+                 const userRef = doc(db, "users", userData.tgChatId);
+                 await updateDoc(userRef, {'businessModeData.lastPurchaseDate': todayStr});
+                 userData.businessModeData.lastPurchaseDate = todayStr;
+            }
         }
 
 
@@ -931,6 +1094,15 @@ const firebaseConfig = {
             const balance = (userData.balance || 0).toFixed(2);
             document.getElementById('balance-display').textContent = `৳${balance}`;
             document.getElementById('header-balance-display').textContent = `৳${balance}`;
+            
+            // Toggle visibility of 'Copy All' button based on mode
+            const copyAllBtn = document.getElementById('copy-all-history-btn');
+            if(currentProfileMode === 'business') {
+                copyAllBtn.classList.remove('hidden');
+            } else {
+                copyAllBtn.classList.add('hidden');
+            }
+
             updateHeaderUI();
         }
 
@@ -958,6 +1130,7 @@ const firebaseConfig = {
                 'updates-page': () => { loadUpdates(); loadReviews(); },
                 'admin-page': () => { populateAdminMailTypes(); loadReplaceRequests(); },
                 'profile-page': loadProfilePage,
+                'bot-setting-page': updateProfileSwitcherUI,
                 'features-page': loadFeaturesPage,
                 'tutorial-page': loadTutorials,
                 'link-team-page': loadLinkedFriends,
@@ -985,12 +1158,14 @@ const firebaseConfig = {
             document.getElementById('add-mails-btn').addEventListener('click', handleAddMails);
             document.getElementById('download-history-btn').addEventListener('click', handleDownloadHistory);
             document.getElementById('copy-history-btn').addEventListener('click', handleCopyHistory);
+            document.getElementById('copy-all-history-btn').addEventListener('click', handleCopyAllHistory);
             document.getElementById('deposit-details-ok-btn').addEventListener('click', () => document.getElementById('deposit-details-modal').classList.add('hidden'));
             document.getElementById('hamburger-menu-btn').addEventListener('click', toggleMenu);
             document.getElementById('menu-overlay').addEventListener('click', toggleMenu);
             document.getElementById('go-to-support-btn').addEventListener('click', toggleMenu);
             
             document.getElementById('more-features-btn').addEventListener('click', handleFeaturesClick);
+            document.getElementById('bot-setting-btn').addEventListener('click', () => navigateTo('bot-setting-page'));
             
             document.getElementById('features-receive-btn').addEventListener('click', handleReceive);
             document.getElementById('features-send-btn').addEventListener('click', () => navigateTo('send-page'));
@@ -1013,6 +1188,10 @@ const firebaseConfig = {
             document.getElementById('otp-mail-btn').addEventListener('click', () => switchMailView('otp'));
 
             document.getElementById('report-issue-form').addEventListener('submit', handleReportSubmit);
+            
+            document.getElementById('personal-mode-btn').addEventListener('click', () => handleProfileSwitch('personal'));
+            document.getElementById('business-mode-btn').addEventListener('click', () => handleProfileSwitch('business'));
+            document.getElementById('close-bulk-purchase-modal').addEventListener('click', () => document.getElementById('bulk-purchase-success-modal').classList.add('hidden'));
         }
 
         function adjustMailViewContainerHeight() {
@@ -1194,7 +1373,6 @@ const firebaseConfig = {
             } catch (error) { console.error(`Error getting stock count for ${collectionName}:`, error); return 0; }
         }
         
-        // [UPDATED] Mail rendering logic
         async function renderMailList(mails, containerEl, effectiveBalance) {
             if (!mails || mails.length === 0) {
                 containerEl.innerHTML = `<p class="text-center text-gray-500 pt-10">এই ক্যাটাগরিতে কোনো মেইল উপলব্ধ নেই।</p>`;
@@ -1206,16 +1384,29 @@ const firebaseConfig = {
             let mailsWithStock = mails.map((mail, index) => ({ ...mail, stock: stockCounts[index] })).sort((a, b) => b.stock - a.stock);
 
             containerEl.innerHTML = mailsWithStock.map(mail => {
-                const isOutOfStock = mail.stock === 0;
-                const insufficientBalance = effectiveBalance < mail.priceBdt;
-                const buyButtonDisabled = isOutOfStock || insufficientBalance;
-                const buyButtonClasses = buyButtonDisabled ? 'bg-gray-400 cursor-not-allowed' : 'btn-gradient';
+                const displayPrice = currentProfileMode === 'business' ? Math.max(0.01, mail.priceBdt - 0.01) : mail.priceBdt;
+                const isOutOfStock = mail.stock < (currentProfileMode === 'business' ? 5 : 1);
+                const insufficientBalance = effectiveBalance < displayPrice;
+                const buyButtonDisabled = isOutOfStock || (insufficientBalance && currentProfileMode === 'personal');
+                
                 const validityTagHtml = (mail.expirationHours != null) ? `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full">${mail.expirationHours}h validity</span>` : '';
                 const apiButtonHtml = mail.apiLink ? `<button onclick="openApiLink('${mail.apiLink}')" class="text-blue-600 font-semibold">API</button>` : '<span class="text-gray-400 font-semibold">API</span>';
                 
-                // Encode details and features to be passed into the modal function
                 const encodedDetails = encodeURIComponent(mail.details || '');
                 const encodedFeatures = encodeURIComponent(JSON.stringify(mail.featureList || []));
+
+                const personalBuyButton = `<button class="${buyButtonDisabled ? 'bg-gray-400 cursor-not-allowed' : 'btn-gradient'} w-full py-2 rounded-lg text-md" ${buyButtonDisabled ? 'disabled' : ''} onclick="buyMail('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}')">Buy Now</button>`;
+                
+                const businessBuySection = `
+                    <div class="flex items-center gap-2">
+                        <div class="flex-grow flex items-center border border-gray-300 rounded-lg">
+                            <button onclick="updateQty('${mail.stockKey}', -1)" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
+                            <input id="qty-${mail.stockKey}" type="number" min="5" max="20" value="5" class="w-full text-center font-bold border-l border-r bg-white" onchange="validateQty(this)">
+                            <button onclick="updateQty('${mail.stockKey}', 1)" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
+                        </div>
+                        <button class="btn-gradient w-auto px-6 py-2 rounded-lg text-md flex-shrink-0" ${isOutOfStock ? 'disabled' : ''} onclick="handleBulkBuy('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}')">Buy</button>
+                    </div>
+                `;
 
                 return `<div class="card-bg p-4 rounded-xl space-y-3">
                     <div class="flex justify-between items-center">
@@ -1231,16 +1422,15 @@ const firebaseConfig = {
                     
                     <div class="grid grid-cols-3 text-center items-center pt-2 border-t border-gray-200">
                         <div class="py-2">${apiButtonHtml}</div>
-                        <div class="py-2"><p class="text-gray-500 text-sm">Price</p><p class="font-bold text-lg text-blue-600">৳${parseFloat(mail.priceBdt).toFixed(2)}</p></div>
+                        <div class="py-2"><p class="text-gray-500 text-sm">Price</p><p class="font-bold text-lg text-blue-600">৳${displayPrice.toFixed(2)}</p></div>
                         <div class="py-2"><p class="text-gray-500 text-sm">Stock</p><p class="font-bold text-lg text-green-600">${mail.stock}</p></div>
                     </div>
-                    <button class="${buyButtonClasses} w-full py-2 rounded-lg text-md" ${buyButtonDisabled ? 'disabled' : ''} onclick="buyMail('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}')">Buy Now</button>
+                    ${currentProfileMode === 'business' ? businessBuySection : personalBuyButton}
                 </div>`;
             }).join('');
             lucide.createIcons();
         }
 
-        // [UPDATED] Load mail store and history with new report status logic
         async function loadMailStore() {
             const loginMailContainer = document.getElementById('login-mail-container');
             const otpMailContainer = document.getElementById('otp-mail-container');
@@ -1253,6 +1443,8 @@ const firebaseConfig = {
             try {
                 const userSnap = await getDoc(doc(db, "users", userData.tgChatId));
                 userData = userSnap.data();
+                currentProfileMode = userData.profileMode || 'personal';
+                updateUI();
 
                 let effectiveBalance = userData.balance;
                 if (userData.linkedBy) {
@@ -1285,7 +1477,13 @@ const firebaseConfig = {
                 });
 
                 const activePurchases = querySnapshot.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => {
-                    if (p.isRefunded) return false; // Hide refunded mails
+                    if (p.isRefunded) return false;
+                    
+                    if (p.type === 'bulk' && currentProfileMode === 'business') {
+                        const expiryTime = p.purchasedAt.toDate().getTime() + (10 * 3600000); // 10 hours
+                        if(Date.now() >= expiryTime) return false;
+                    }
+
                     if (p.expirationHours && p.purchasedAt) {
                         const expiryTime = p.purchasedAt.toDate().getTime() + (p.expirationHours * 3600000);
                         return Date.now() < expiryTime;
@@ -1298,23 +1496,47 @@ const firebaseConfig = {
                 } else {
                     historyListEl.innerHTML = activePurchases.map(purchase => {
                         const date = purchase.purchasedAt.toDate().toLocaleString();
+                        
+                        if (purchase.type === 'bulk' && purchase.mails) {
+                            const bulkMailsJson = encodeURIComponent(JSON.stringify(purchase.mails));
+                            const individualMailHtml = purchase.mails.map((mail, index) => {
+                                const mailJson = encodeURIComponent(JSON.stringify(mail));
+                                return `<div class="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                                    <span class="font-mono text-sm text-gray-800 truncate flex-1">${mail.email} | ${mail.password}</span>
+                                    <button onclick="copyIndividualBulk('${mailJson}')" class="ml-2 p-1.5 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button>
+                                </div>`;
+                            }).join('');
+
+                            return `<div class="card-bg p-4 rounded-xl space-y-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-bold text-lg text-gray-800">${purchase.mailType} (Bulk)</h4>
+                                        <p class="text-xs text-gray-500">${date}</p>
+                                        <p class="text-sm font-semibold mt-1">Purchased: ${purchase.mails.length} mails</p>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-2">
+                                        <button onclick="copyAllBulk('${bulkMailsJson}')" class="bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-blue-200 flex items-center gap-1">
+                                            <i data-lucide="copy-check" class="w-3 h-3"></i> Copy All
+                                        </button>
+                                        <button onclick='downloadBulkPurchaseXLSX(${JSON.stringify(purchase.mails)})' class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-green-200 flex items-center gap-1">
+                                            <i data-lucide="download" class="w-3 h-3"></i> Download
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="space-y-2 pt-2 border-t max-h-48 overflow-y-auto">${individualMailHtml}</div>
+                            </div>`;
+                        }
+                        
                         const fullData = [purchase.mail, purchase.password, purchase.refreshToken, purchase.clientId].filter(Boolean).join('|');
                         const countdownHtml = purchase.expirationHours ? `<div class="text-xs text-red-500 font-semibold text-right mt-1" data-purchase-id="${purchase.id}" data-purchased-at="${purchase.purchasedAt.toMillis()}" data-expires-in-hours="${purchase.expirationHours}">Expires in: --:--:--</div>` : '';
                         
                         const reportStatus = reportStatusMap.get(purchase.id);
                         let reportButton;
                         switch (reportStatus) {
-                            case 'approved':
-                                reportButton = `<button class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="check-circle" class="w-3 h-3"></i> Refunded</button>`;
-                                break;
-                            case 'rejected':
-                                reportButton = `<button class="bg-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="x-circle" class="w-3 h-3"></i> Rejected</button>`;
-                                break;
-                             case 'pending':
-                                reportButton = `<button class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="hourglass" class="w-3 h-3"></i> Pending</button>`;
-                                break;
-                            default:
-                                reportButton = `<button id="report-btn-${purchase.id}" onclick="showReportForm('${purchase.id}', '${purchase.mailType}', ${purchase.cost}, '${purchase.saleId}')" class="bg-orange-100 text-orange-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-orange-200 flex items-center gap-1"><i data-lucide="shield-alert" class="w-3 h-3"></i> Report Issue</button>`;
+                            case 'approved': reportButton = `<button class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="check-circle" class="w-3 h-3"></i> Refunded</button>`; break;
+                            case 'rejected': reportButton = `<button class="bg-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="x-circle" class="w-3 h-3"></i> Rejected</button>`; break;
+                            case 'pending': reportButton = `<button class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="hourglass" class="w-3 h-3"></i> Pending</button>`; break;
+                            default: reportButton = `<button id="report-btn-${purchase.id}" onclick="showReportForm('${purchase.id}', '${purchase.mailType}', ${purchase.cost}, '${purchase.saleId}')" class="bg-orange-100 text-orange-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-orange-200 flex items-center gap-1"><i data-lucide="shield-alert" class="w-3 h-3"></i> Report</button>`;
                         }
                         
                         return `<div class="card-bg p-4 rounded-xl space-y-3"><div class="flex justify-between items-start"><div><h4 class="font-bold text-lg text-gray-800">${purchase.mailType}</h4><p class="text-xs text-gray-500">${date}</p><p class="text-xs font-mono text-blue-600 mt-1">ID: ${purchase.saleId || 'N/A'}</p></div><div class="flex flex-col items-end gap-2">${reportButton}<button onclick="copyToClipboard('${fullData}', this)" class="bg-gray-100 text-gray-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-gray-200 flex items-center gap-1"><i data-lucide="copy-plus" class="w-3 h-3"></i> FULL COPY</button></div></div><div class="space-y-2 pt-2 border-t"><div class="flex items-center justify-between bg-gray-50 p-2 rounded-md"><span class="text-sm font-medium text-gray-500 mr-2">EMAIL:</span><span class="font-mono text-sm text-gray-800 truncate">${purchase.mail}</span><button onclick="copyToClipboard('${purchase.mail}', this)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button></div><div class="flex items-center justify-between bg-gray-50 p-2 rounded-md"><span class="text-sm font-medium text-gray-500 mr-2">PASS:</span><span class="font-mono text-sm text-gray-800">${purchase.password || 'N/A'}</span><button onclick="copyToClipboard('${purchase.password || ''}', this)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button></div></div>${countdownHtml}</div>`;
@@ -1365,7 +1587,18 @@ const firebaseConfig = {
                     loader.style.display = 'none';
                     return showAlert("আপনার কোনো History নেই");
                 }
-                const dataForExcel = querySnapshot.docs.map(doc => { const p = doc.data(); return { 'Purchase Date': p.purchasedAt.toDate().toLocaleString(), 'Mail Type': p.mailType, 'Email': p.mail, 'Password': p.password || 'N/A', 'Cost (BDT)': p.cost, 'Full Data': [p.mail,p.password,p.refreshToken,p.clientId].filter(Boolean).join('|') }; });
+                const dataForExcel = [];
+                querySnapshot.docs.forEach(doc => {
+                    const p = doc.data();
+                    if (p.type === 'bulk' && p.mails) {
+                        p.mails.forEach(mail => {
+                           dataForExcel.push({ 'Purchase Date': p.purchasedAt.toDate().toLocaleString(), 'Mail Type': p.mailType, 'Email': mail.email, 'Password': mail.password || 'N/A', 'Full Data': [mail.email, mail.password, mail.refresh_token, mail.client_id].filter(Boolean).join('|') });
+                        });
+                    } else {
+                        dataForExcel.push({ 'Purchase Date': p.purchasedAt.toDate().toLocaleString(), 'Mail Type': p.mailType, 'Email': p.mail, 'Password': p.password || 'N/A', 'Cost (BDT)': p.cost, 'Full Data': [p.mail, p.password, p.refreshToken, p.clientId].filter(Boolean).join('|') });
+                    }
+                });
+                
                 const ws = XLSX.utils.json_to_sheet(dataForExcel);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, "Purchase History");
@@ -1391,6 +1624,39 @@ const firebaseConfig = {
             finally { loader.style.display = 'none'; }
         }
 
+        async function handleCopyAllHistory() {
+            if (currentProfileMode !== 'business') return;
+            loader.style.display = 'flex';
+            try {
+                const tenHoursAgo = Timestamp.fromDate(new Date(Date.now() - 10 * 60 * 60 * 1000));
+                const q = query(collection(db, "mail_purchases"), where("userId", "==", userData.tgChatId), where("purchasedAt", ">=", tenHoursAgo), orderBy("purchasedAt", "desc"));
+                const querySnapshot = await getDocs(q);
+                if (querySnapshot.empty) {
+                    loader.style.display = 'none';
+                    return showAlert("গত ১০ ঘন্টায় কোনো কেনাকাটার ইতিহাস পাওয়া যায়নি।");
+                }
+                let fullHistory = [];
+                querySnapshot.docs.forEach(doc => {
+                    const p = doc.data();
+                    if (p.type === 'bulk' && p.mails) {
+                        p.mails.forEach(mail => {
+                           fullHistory.push([mail.email, mail.password, mail.refresh_token, mail.client_id].filter(Boolean).join('|'));
+                        });
+                    } else {
+                        fullHistory.push([p.mail, p.password, p.refreshToken, p.clientId].filter(Boolean).join('|'));
+                    }
+                });
+                
+                if (fullHistory.length > 0) {
+                    copyToClipboard(fullHistory.join('\n'), null, 'গত ১০ ঘণ্টার সব কেনাকাটার FULL DATA কপি করা হয়েছে!');
+                } else {
+                    showAlert("কোনো ডেটা কপি করার জন্য পাওয়া যায়নি।");
+                }
+            } catch (error) { showAlert("হিস্ট্রি কপি করার সময় একটি সমস্যা হয়েছে।"); console.error(error); }
+            finally { loader.style.display = 'none'; }
+        }
+
+
         window.buyMail = async function(mailType, costParam, stockKey) {
             const cost = parseFloat(costParam);
             if (!confirm(`আপনি কি ৳${cost.toFixed(2)} দিয়ে একটি ${mailType} কিনতে চান?`)) return;
@@ -1398,18 +1664,16 @@ const firebaseConfig = {
             loader.style.display = 'flex';
             
             const mailQuery = query(collection(db, stockKey), where("isSold", "==", false), limit(1));
-            const mailQuerySnapshot = await getDocs(mailQuery);
-
-            if (mailQuerySnapshot.empty) {
-                loader.style.display = 'none';
-                showAlert("দুঃখিত, এই ধরনের মেইল বর্তমানে স্টক শেষ।");
-                return;
-            }
-            const mailDocToPurchase = mailQuerySnapshot.docs[0];
-            const mailDocRef = mailDocToPurchase.ref;
-            const mailData = mailDocToPurchase.data();
             
             try {
+                const mailQuerySnapshot = await getDocs(mailQuery);
+                if (mailQuerySnapshot.empty) {
+                    throw new Error("দুঃখিত, এই ধরনের মেইল বর্তমানে স্টক শেষ।");
+                }
+                const mailDocToPurchase = mailQuerySnapshot.docs[0];
+                const mailDocRef = mailDocToPurchase.ref;
+                const mailData = mailDocToPurchase.data();
+            
                 await runTransaction(db, async (transaction) => {
                     const buyerRef = doc(db, "users", userData.tgChatId);
                     const counterRef = doc(db, "counters", "mail_purchase");
@@ -1460,7 +1724,7 @@ const firebaseConfig = {
                     const purchaseLogRef = doc(collection(db, "mail_purchases"));
                     const mailConfig = appConfig.mails.find(m => m.stockKey === stockKey);
                     transaction.set(purchaseLogRef, {
-                        saleId: saleId, userId: userData.tgChatId, paidBy: paidBy, mailType: mailType,
+                        saleId: saleId, userId: userData.tgChatId, paidBy: paidBy, mailType: mailType, type: 'single',
                         mail: mailData.email, password: mailData.password || null,
                         refreshToken: mailData.refresh_token || null, clientId: mailData.client_id || null,
                         cost: cost, purchasedAt: serverTimestamp(),
@@ -1468,6 +1732,16 @@ const firebaseConfig = {
                     });
                     
                     transaction.update(counterRef, { currentId: saleId + 1 });
+                    
+                    // Update business mode data if applicable
+                    if(currentBuyerData.profileMode === 'business') {
+                        const todayStr = getTodayDateString();
+                        const currentTotal = (currentBuyerData.businessModeData?.lastPurchaseDate === todayStr) ? (currentBuyerData.businessModeData.dailyPurchaseTotal || 0) : 0;
+                        transaction.update(buyerRef, {
+                            'businessModeData.lastPurchaseDate': todayStr,
+                            'businessModeData.dailyPurchaseTotal': currentTotal + cost
+                        });
+                    }
                 });
 
                 document.getElementById('purchase-success-email').textContent = mailData.email;
@@ -1489,7 +1763,6 @@ const firebaseConfig = {
             }
         }
 
-        // [UPDATED] Show Mail Details modal with features
         window.showMailDetails = function(mailType, encodedDetails, encodedFeatures) {
             const details = decodeURIComponent(encodedDetails);
             const features = JSON.parse(decodeURIComponent(encodedFeatures));
@@ -1833,8 +2106,6 @@ const firebaseConfig = {
 
         function handleFeaturesClick() { navigateTo('features-page'); }
 
-        // --- NEW FUNCTIONS FOR REPLACE/REPORT SYSTEM ---
-
         window.showReportForm = (purchaseId, mailType, cost, saleId) => {
             document.getElementById('report-modal-mail-type').textContent = `${mailType} (ID: ${saleId})`;
             document.getElementById('report-purchase-id').value = purchaseId;
@@ -1877,7 +2148,7 @@ const firebaseConfig = {
                 });
                 showAlert("আপনার অভিযোগ সফলভাবে জমা হয়েছে। অ্যাডমিন শীঘ্রই এটি পর্যালোচনা করবেন।");
                 document.getElementById('report-issue-modal').classList.add('hidden');
-                loadMailStore(); // Refresh history to show pending status
+                loadMailStore();
             } catch (e) {
                 showAlert(`একটি সমস্যা হয়েছে: ${e.message}`);
             } finally {
@@ -1940,7 +2211,6 @@ const firebaseConfig = {
             }
         }
         
-        // [UPDATED] Reject request with penalty logic
         window.handleRejectRequest = async (requestId, userId) => {
             if (!confirm("Are you sure you want to reject this request? This may trigger a penalty for the user.")) return;
             loader.style.display = 'flex';
@@ -1968,7 +2238,7 @@ const firebaseConfig = {
 
                     if (dailyRejections.count >= 5) {
                         updates.isBlocked = true;
-                        updates.blockedUntil = Timestamp.fromMillis(Date.now() + 5 * 60 * 60 * 1000); // 5 hours block
+                        updates.blockedUntil = Timestamp.fromMillis(Date.now() + 5 * 60 * 60 * 1000);
                     }
                     
                     transaction.update(userRef, updates);
@@ -1982,6 +2252,235 @@ const firebaseConfig = {
             } finally {
                 loader.style.display = 'none';
             }
+        }
+
+        function updateProfileSwitcherUI() {
+            const personalBtn = document.getElementById('personal-mode-btn');
+            const businessBtn = document.getElementById('business-mode-btn');
+            const glider = document.querySelector('.profile-mode-switcher .glider');
+            
+            if (!personalBtn || !businessBtn || !glider) return;
+
+            if (currentProfileMode === 'personal') {
+                personalBtn.style.color = '#007bff';
+                businessBtn.style.color = '#4b5563';
+                glider.style.transform = 'translateX(0%)';
+            } else {
+                personalBtn.style.color = '#4b5563';
+                businessBtn.style.color = '#007bff';
+                glider.style.transform = 'translateX(100%)';
+            }
+        }
+
+        async function handleProfileSwitch(newMode) {
+            if (newMode === currentProfileMode) return;
+
+            if (newMode === 'business') {
+                if (userData.balance < 80) {
+                    return showAlert(`বিজনেস মোড চালু করতে আপনার অ্যাকাউন্টে কমপক্ষে ৳80 থাকতে হবে। আপনার বর্তমান ব্যালেন্স ৳${userData.balance.toFixed(2)}।`);
+                }
+            }
+
+            loader.style.display = 'flex';
+            try {
+                const userRef = doc(db, "users", userData.tgChatId);
+                const todayStr = getTodayDateString();
+                await updateDoc(userRef, {
+                    profileMode: newMode,
+                    'businessModeData.lastPurchaseDate': todayStr,
+                    'businessModeData.dailyPurchaseTotal': 0
+                });
+                
+                userData.profileMode = newMode;
+                currentProfileMode = newMode;
+
+                updateProfileSwitcherUI();
+                updateUI();
+                
+                if (document.getElementById('mail-page').classList.contains('active')) {
+                    await loadMailStore();
+                }
+
+            } catch (e) {
+                showAlert("Failed to switch profile. Please try again.");
+                console.error("Profile switch error:", e);
+            } finally {
+                loader.style.display = 'none';
+            }
+        }
+        
+        window.updateQty = (stockKey, delta) => {
+            const input = document.getElementById(`qty-${stockKey}`);
+            let currentValue = parseInt(input.value, 10);
+            currentValue += delta;
+            if (currentValue < 5) currentValue = 5;
+            if (currentValue > 20) currentValue = 20;
+            input.value = currentValue;
+        };
+
+        window.validateQty = (input) => {
+            let value = parseInt(input.value, 10);
+            if (isNaN(value) || value < 5) input.value = 5;
+            if (value > 20) input.value = 20;
+        };
+        
+        window.handleBulkBuy = async function(mailType, originalPrice, stockKey) {
+            const quantityInput = document.getElementById(`qty-${stockKey}`);
+            const quantity = parseInt(quantityInput.value, 10);
+            
+            if (isNaN(quantity) || quantity < 5 || quantity > 20) {
+                return showAlert("Please enter a quantity between 5 and 20.");
+            }
+
+            const singlePrice = Math.max(0.01, originalPrice - 0.01);
+            const totalCost = quantity * singlePrice;
+            
+            if (!confirm(`Buy ${quantity} x ${mailType} mails for a total of ৳${totalCost.toFixed(2)}?`)) return;
+
+            loader.style.display = 'flex';
+            
+            try {
+                let purchasedMailsData = [];
+
+                await runTransaction(db, async (transaction) => {
+                    const buyerRef = doc(db, "users", userData.tgChatId);
+                    const buyerSnap = await transaction.get(buyerRef);
+                    if (!buyerSnap.exists()) throw new Error("User data not found.");
+                    
+                    const currentBuyerData = buyerSnap.data();
+                    let effectiveBalance = currentBuyerData.balance;
+                    
+                    let teamLeaderRef = null;
+                    let currentLeaderData = null;
+                    if (currentBuyerData.linkedBy) {
+                        teamLeaderRef = doc(db, "users", currentBuyerData.linkedBy);
+                        const leaderSnap = await transaction.get(teamLeaderRef);
+                        if(leaderSnap.exists()) {
+                            currentLeaderData = leaderSnap.data();
+                            effectiveBalance += currentLeaderData.balance;
+                        }
+                    }
+                    
+                    if (effectiveBalance < totalCost) {
+                        throw new Error("Insufficient balance for this bulk purchase.");
+                    }
+                    
+                    const mailQuery = query(collection(db, stockKey), where("isSold", "==", false), limit(quantity));
+                    const mailQuerySnapshot = await getDocs(mailQuery);
+
+                    if (mailQuerySnapshot.docs.length < quantity) {
+                        throw new Error(`Not enough stock. Only ${mailQuerySnapshot.docs.length} mails available.`);
+                    }
+
+                    // Deduct balance
+                    let costRemaining = totalCost;
+                    if (currentBuyerData.balance > 0) {
+                        const deduction = Math.min(costRemaining, currentBuyerData.balance);
+                        transaction.update(buyerRef, { balance: increment(-deduction) });
+                        costRemaining -= deduction;
+                    }
+                    if (costRemaining > 0 && teamLeaderRef) {
+                        transaction.update(teamLeaderRef, { balance: increment(-costRemaining) });
+                        transaction.update(teamLeaderRef, { [`teamSpending.${userData.tgChatId}`]: increment(costRemaining) });
+                    }
+
+                    // Mark mails as sold
+                    mailQuerySnapshot.docs.forEach(mailDoc => {
+                        const mailData = mailDoc.data();
+                        purchasedMailsData.push({
+                            email: mailData.email,
+                            password: mailData.password || null,
+                            refresh_token: mailData.refresh_token || null,
+                            client_id: mailData.client_id || null
+                        });
+                        transaction.update(doc(db, stockKey, mailDoc.id), { isSold: true, soldTo: userData.tgChatId, soldAt: serverTimestamp() });
+                    });
+
+                    // Create one purchase log for the bulk transaction
+                    const purchaseLogRef = doc(collection(db, "mail_purchases"));
+                    transaction.set(purchaseLogRef, {
+                        userId: userData.tgChatId, mailType: mailType, type: 'bulk',
+                        mails: purchasedMailsData,
+                        cost: totalCost,
+                        quantity: quantity,
+                        purchasedAt: serverTimestamp()
+                    });
+
+                    // Update business mode data
+                    if(currentBuyerData.profileMode === 'business') {
+                        const todayStr = getTodayDateString();
+                        const currentTotal = (currentBuyerData.businessModeData?.lastPurchaseDate === todayStr) ? (currentBuyerData.businessModeData.dailyPurchaseTotal || 0) : 0;
+                        transaction.update(buyerRef, {
+                            'businessModeData.lastPurchaseDate': todayStr,
+                            'businessModeData.dailyPurchaseTotal': currentTotal + totalCost
+                        });
+                    }
+                });
+
+                showBulkPurchaseSuccess(purchasedMailsData, mailType);
+                loadMailStore();
+                const finalUserSnap = await getDoc(doc(db, "users", userData.tgChatId));
+                userData = finalUserSnap.data();
+                updateUI();
+
+            } catch (e) {
+                showAlert(`Bulk purchase failed: ${e.message}`);
+                console.error("Bulk Buy Error:", e);
+                loadMailStore();
+            } finally {
+                loader.style.display = 'none';
+            }
+        };
+
+        function showBulkPurchaseSuccess(mails, mailType) {
+            document.getElementById('bulk-purchase-summary').textContent = `You have successfully purchased ${mails.length} ${mailType} mails.`;
+            const listEl = document.getElementById('bulk-purchase-list');
+            listEl.innerHTML = mails.map(mail => 
+                `<div class="grid grid-cols-2 gap-2 text-sm">
+                    <span class="font-mono truncate text-gray-700">${mail.email}</span>
+                    <span class="font-mono truncate text-gray-700">${mail.password}</span>
+                </div>`
+            ).join('');
+            
+            const downloadBtn = document.getElementById('download-bulk-xlsx-btn');
+            const newBtn = downloadBtn.cloneNode(true);
+            downloadBtn.parentNode.replaceChild(newBtn, downloadBtn);
+            newBtn.addEventListener('click', () => downloadBulkPurchaseXLSX(mails));
+
+            document.getElementById('bulk-purchase-success-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        window.downloadBulkPurchaseXLSX = function(mails) {
+            try {
+                const dataForExcel = mails.map(p => { 
+                    return { 
+                        'Email': p.email, 
+                        'Password': p.password || 'N/A', 
+                        'Full Data': [p.email,p.password,p.refresh_token,p.client_id].filter(Boolean).join('|') 
+                    }; 
+                });
+                const ws = XLSX.utils.json_to_sheet(dataForExcel);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Bulk Purchase");
+                ws['!cols'] = [ {wch: 30}, {wch: 30}, {wch: 70} ];
+                XLSX.writeFile(wb, "Bulk_Purchase.xlsx");
+            } catch (error) {
+                showAlert("Failed to create XLSX file.");
+                console.error("XLSX export error:", error);
+            }
+        };
+
+        window.copyAllBulk = function(encodedMailsJson) {
+            const mails = JSON.parse(decodeURIComponent(encodedMailsJson));
+            const textToCopy = mails.map(m => [m.email, m.password, m.refresh_token, m.client_id].filter(Boolean).join('|')).join('\n');
+            copyToClipboard(textToCopy, null, 'সব মেইলের তথ্য কপি করা হয়েছে!');
+        }
+
+        window.copyIndividualBulk = function(encodedMailJson) {
+            const mail = JSON.parse(decodeURIComponent(encodedMailJson));
+            const textToCopy = [mail.email, mail.password, mail.refresh_token, mail.client_id].filter(Boolean).join('|');
+            copyToClipboard(textToCopy, null, 'মেইলের তথ্য কপি করা হয়েছে!');
         }
 
     </script>
