@@ -325,9 +325,9 @@
     <div id="loader" class="fixed inset-0 bg-f8f8f8 flex items-center justify-center z-[100]">
         <div class="text-center">
             <div class="logo-container">
-                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#007bff] mx-auto"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600 mx-auto"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             </div>
-            <h1 class="text-accent-gradient loader-text mt-4">𝐌𝐀𝐈𝐋 𝐌𝐀𝐑𝐊𝐄𝐓</h1>
+            <h1 class="text-accent-gradient loader-text mt-4">🅐🅟 𝗧𝗘𝗖𝗛 ⚡ 𝗠𝗔𝗥𝗞𝗘𝗧 🛍️</h1>
         </div>
         <div id="loader-reviews">"খুবই বিশ্বস্ত একটি সাইট।" - মোঃ রায়হান</div>
     </div>
@@ -622,9 +622,9 @@
                 <h2 class="text-xl font-bold text-center text-gray-800">Admin Panel</h2>
                 <div class="card-bg p-5 rounded-xl space-y-4">
                     <h3 class="font-semibold text-lg text-gray-800">Add New Mails</h3>
-                    <p class="text-sm text-gray-600">ফরম্যাট: <code class="bg-gray-100 p-1 rounded text-gray-700">email/password/refresh_token/client_id</code></p>
+                    <p class="text-sm text-gray-600">ফরম্যাট: <code class="bg-gray-100 p-1 rounded text-gray-700">email|password|refresh_token|client_id</code></p>
                     <div><label for="mail-type-select" class="block text-sm font-medium text-gray-600 mb-1">Mail Type</label><select id="mail-type-select" class="w-full p-3 rounded-lg input-field"></select></div>
-                    <div><label for="mail-data-textarea" class="block text-sm font-medium text-gray-600 mb-1">Mail Data (one per line)</label><textarea id="mail-data-textarea" rows="10" placeholder="mail@example.com/password/refresh_token/client_id" class="w-full p-3 rounded-lg input-field font-mono text-xs"></textarea></div>
+                    <div><label for="mail-data-textarea" class="block text-sm font-medium text-gray-600 mb-1">Mail Data (one per line)</label><textarea id="mail-data-textarea" rows="10" placeholder="mail@example.com|password|refresh_token|client_id" class="w-full p-3 rounded-lg input-field font-mono text-xs"></textarea></div>
                     <button id="add-mails-btn" class="w-full p-3 rounded-lg btn-gradient">Add Mails to Stock</button>
                 </div>
 
@@ -1842,7 +1842,7 @@
                 const batch = writeBatch(db);
                 let addedCount = 0;
                 lines.forEach(line => {
-                    const parts = line.trim().split('/');
+                    const parts = line.trim().split('|');
                     if (parts.length >= 2) { 
                         batch.set(doc(collection(db, stockKey)), { 
                             email: parts[0], password: parts[1], 
