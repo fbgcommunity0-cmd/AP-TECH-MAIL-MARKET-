@@ -310,22 +310,6 @@
         </div>
     </div>
 
-    <!-- =========== NEW: MANDATORY CHANNEL JOIN MODAL =========== -->
-    <div id="channel-join-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[90] p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-sm text-center space-y-4">
-            <i data-lucide="lock" class="w-12 h-12 text-amber-500 mx-auto"></i>
-            <h3 class="text-xl font-bold text-gray-800">Access Restricted</h3>
-            <p class="text-gray-600">
-                To use our app, you must join our official channels. This helps us keep you updated and maintain our community.
-            </p>
-            <div id="required-channels-list" class="space-y-3 pt-2">
-                <!-- Channel links will be dynamically inserted here -->
-            </div>
-            <button id="verify-join-btn" class="w-full p-3 rounded-lg btn-gradient mt-4">I've Joined, Verify Now</button>
-        </div>
-    </div>
-
-
     <div id="menu-overlay"></div>
     <aside id="slide-out-menu">
         <div class="menu-header">
@@ -335,7 +319,7 @@
         <nav id="support-channels-list" class="flex-grow overflow-y-auto">
             </nav>
         <div class="p-4 text-center text-xs text-gray-400 border-t">
-            🅐🅟 𝗧𝗘𝗖𝗛 ⚡ 𝗠𝗔𝗥𝗞𝗘𝗧 🛍️ &copy; 2025
+            🅐🅟 𝗧𝗘𝗖𝗛 ⚡ 𝗠𝗔𝗥𝗞𝗘𝗧 🛍️ &copy; 2026
         </div>
     </aside>
     <div id="app-container" class="min-h-screen flex-col main-page">
@@ -917,6 +901,7 @@
         };
         
         async function initializeAppLogic() {
+            // Show a spinner on the button
             const initBtn = document.getElementById('init-app-btn');
             initBtn.innerHTML = `<div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>`;
             initBtn.disabled = true;
@@ -937,93 +922,11 @@
                 return;
             }
             
-            await fetchAppConfig(); // Fetch config early for channel links
             setupEventListeners();
-            
-            const isMember = await checkChannelMembership();
-
-            if (isMember) {
-                await completeInitialization();
-            } else {
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    populateAndShowChannelJoinModal();
-                }, 500);
-            }
-        }
-
-        async function checkChannelMembership() {
-            // =================================================================
-            // !! গুরুত্বপূর্ণ নোট !!
-            // =================================================================
-            // এই ফাংশনটি একজন ব্যবহারকারী আপনার চ্যানেলের সদস্য কিনা তা যাচাই করে।
-            // নিরাপত্তার কারণে, এই যাচাইকরণটি ক্লায়েন্ট-সাইডে (এখানে) করা উচিত নয়।
-            // আপনাকে একটি সার্ভার-সাইড ফাংশন তৈরি করতে হবে (যেমন, Firebase Cloud Function)।
-            //
-            // কার্যপ্রবাহ:
-            // 1. এই ক্লায়েন্ট কোড থেকে আপনার সার্ভার-সাইড ফাংশনে ব্যবহারকারীর Telegram ID পাঠান।
-            // 2. আপনার সার্ভার-সাইড ফাংশনটি Telegram Bot API-এর 'getChatMember' মেথড ব্যবহার করে।
-            //    - `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getChatMember`
-            //    - প্রয়োজনীয় প্যারামিটার: `chat_id` (আপনার চ্যানেলের আইডি) এবং `user_id` (ব্যবহারকারীর আইডি)।
-            // 3. প্রতিটি প্রয়োজনীয় চ্যানেলের জন্য এই মেথডটি কল করুন।
-            // 4. যদি ব্যবহারকারী সব চ্যানেলের সদস্য হন, তাহলে সার্ভার থেকে `true` রিটার্ন করুন। অন্যথায়, `false` রিটার্ন করুন।
-            //
-            // নিচের কোডটি শুধুমাত্র UI দেখানোর জন্য একটি সিমুলেশন।
-            // **বাস্তব অ্যাপ্লিকেশনের জন্য, নিচের সিমুলেশন কোডটি আপনার সার্ভার কলের সাথে প্রতিস্থাপন করুন।**
-            
-            // সিমুলেশন: প্রথমবার চেক করলে 'false' রিটার্ন করবে, দ্বিতীয়বার 'true' করবে।
-            if (!window.hasTriedVerification) {
-                window.hasTriedVerification = true;
-                return false; 
-            }
-            return true;
-        }
-
-        function populateAndShowChannelJoinModal() {
-            const modal = document.getElementById('channel-join-modal');
-            const listEl = document.getElementById('required-channels-list');
-            const channels = appConfig.requiredChannels || [];
-
-            if(channels.length === 0) {
-                 console.log("No required channels configured in Firebase.");
-                 completeInitialization(); // No channels to check, proceed.
-                 return;
-            }
-
-            listEl.innerHTML = channels.map(channel => {
-                return `<a href="${channel.link}" target="_blank" class="w-full p-3 rounded-lg bg-gray-100 text-gray-800 font-semibold flex items-center justify-center gap-2 hover:bg-gray-200">
-                    <i data-lucide="arrow-right-circle" class="w-5 h-5"></i>
-                    <span>Join ${channel.name}</span>
-                </a>`;
-            }).join('');
-            
-            lucide.createIcons();
-            modal.classList.remove('hidden');
-        }
-
-        async function handleVerifyJoin() {
-            const verifyBtn = document.getElementById('verify-join-btn');
-            verifyBtn.innerHTML = `<div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>`;
-            verifyBtn.disabled = true;
-
-            const isMember = await checkChannelMembership();
-
-            if (isMember) {
-                document.getElementById('channel-join-modal').classList.add('hidden');
-                loader.style.display = 'flex';
-                setTimeout(() => { loader.style.opacity = '1'; }, 10);
-                await completeInitialization();
-            } else {
-                showAlert("You haven't joined all the required channels. Please join them and try again.");
-                verifyBtn.innerHTML = "I've Joined, Verify Now";
-                verifyBtn.disabled = false;
-            }
-        }
-        
-        async function completeInitialization() {
             setupBanner();
+
             await initUserSession();
+
             loader.style.opacity = '0';
             setTimeout(() => {
                 loader.style.display = 'none';
@@ -1100,6 +1003,7 @@
             await checkBusinessModeStatus();
             currentProfileMode = userData.profileMode || 'personal';
 
+            await fetchAppConfig();
             if (tgChatId === ADMIN_UID) {
                 document.getElementById('admin-nav-link').classList.remove('hidden');
             }
@@ -1165,7 +1069,7 @@
         async function fetchAppConfig() {
             const configRef = doc(db, "config", "main");
             const configSnap = await getDoc(configRef);
-            appConfig = configSnap.exists() ? configSnap.data() : { mails: [], requiredChannels: [] };
+            appConfig = configSnap.exists() ? configSnap.data() : { mails: [] };
         }
         
         function updateHeaderUI() {
@@ -1262,7 +1166,6 @@
         }
 
         function setupEventListeners() {
-            document.getElementById('verify-join-btn').addEventListener('click', handleVerifyJoin);
             document.querySelectorAll('.nav-link-premium[data-page]').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigateTo(link.dataset.page); }));
             document.getElementById('header-deposit-btn').addEventListener('click', () => navigateTo('pay-page'));
             document.getElementById('notification-btn').addEventListener('click', showNotifications);
@@ -1631,7 +1534,7 @@
                                     </div>
                                     <div class="flex flex-col items-end gap-2">
                                         <button onclick="copyAllBulk('${bulkMailsJson}')" class="bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-blue-200 flex items-center gap-1">
-                                            <i data-lucide="copy-check" class="w-3 h-3"></i> FULL COPY
+                                            <i data-lucide="copy-check" class="w-3 h-3"></i> Copy All
                                         </button>
                                         <button onclick='downloadBulkPurchaseXLSX(${JSON.stringify(purchase.mails)})' class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-green-200 flex items-center gap-1">
                                             <i data-lucide="download" class="w-3 h-3"></i> Download
@@ -2629,13 +2532,13 @@
         window.copyAllBulk = function(encodedMailsJson) {
             const mails = JSON.parse(decodeURIComponent(encodedMailsJson));
             const textToCopy = mails.map(m => [m.email, m.password, m.refresh_token, m.client_id].filter(Boolean).join('|')).join('\n');
-            copyToClipboard(textToCopy, null, 'সব মেইলের তথ্য (FULL COPY) কপি করা হয়েছে!');
+            copyToClipboard(textToCopy, null, 'সব মেইলের তথ্য কপি করা হয়েছে!');
         }
 
         window.copyIndividualBulk = function(encodedMailJson) {
             const mail = JSON.parse(decodeURIComponent(encodedMailJson));
             const textToCopy = [mail.email, mail.password, mail.refresh_token, mail.client_id].filter(Boolean).join('|');
-            copyToClipboard(textToCopy, null, 'মেইলের তথ্য (FULL COPY) কপি করা হয়েছে!');
+            copyToClipboard(textToCopy, null, 'মেইলের তথ্য কপি করা হয়েছে!');
         }
 
     </script>
