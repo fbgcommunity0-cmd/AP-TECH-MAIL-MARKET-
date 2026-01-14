@@ -580,7 +580,7 @@
                         <p class="text-sm text-gray-500 mt-2 mb-4">যারা বেশি পরিমাণে মেইল কেনেন তাদের জন্য।</p>
                          <ul class="space-y-2 text-sm">
                             <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>প্রতি মেইলে বিশেষ ছাড়।</li>
-                            <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>একবারে ৫-২০টি মেইল কেনার সুবিধা।</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>একবারে ১-স্টক পর্যন্ত মেইল কেনার সুবিধা।</li>
                             <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>এক ক্লিকে সব হিস্ট্রি কপি করার সুবিধা।</li>
                             <li class="flex items-center gap-2"><i data-lucide="check-circle" class="w-4 h-4 text-green-500"></i>আপনার মোট সাশ্রয় ট্র্যাক করুন।</li>
                         </ul>
@@ -806,18 +806,26 @@
     <div id="bulk-purchase-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
         <div class="card-bg rounded-2xl p-6 w-full max-w-md space-y-4 relative">
              <button id="close-bulk-purchase-modal" class="modal-close-btn"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <i data-lucide="check-circle-2" class="w-12 h-12 text-green-500 mx-auto"></i>
-            <h3 class="text-xl font-bold text-gray-800 text-center">Bulk Purchase Successful!</h3>
-            <p id="bulk-purchase-summary" class="text-sm text-gray-600 text-center"></p>
-
+            <div class="text-center">
+                <i data-lucide="check-circle-2" class="w-12 h-12 text-green-500 mx-auto"></i>
+                <h3 class="text-xl font-bold text-gray-800 text-center">Bulk Purchase Successful!</h3>
+                <p id="bulk-purchase-summary" class="text-sm text-gray-600 text-center"></p>
+            </div>
+            
             <div id="bulk-purchase-list" class="max-h-60 overflow-y-auto bg-gray-50 p-3 rounded-lg space-y-2 border">
                 <!-- Purchased mails will be listed here -->
             </div>
             
-            <button id="download-bulk-xlsx-btn" class="w-full p-3 rounded-lg btn-gradient mt-4 flex items-center justify-center gap-2">
-                <i data-lucide="download" class="w-5 h-5"></i>
-                <span>Download as XLSX</span>
-            </button>
+            <div class="grid grid-cols-2 gap-3 mt-4">
+                <button id="bulk-success-xlsx-copy-btn" class="w-full p-3 rounded-lg bg-green-100 text-green-800 font-semibold flex items-center justify-center gap-2 hover:bg-green-200">
+                    <i data-lucide="table-2" class="w-5 h-5"></i>
+                    <span>XLSX Copy</span>
+                </button>
+                <button id="bulk-success-send-telegram-btn" class="w-full p-3 rounded-lg bg-blue-100 text-blue-800 font-semibold flex items-center justify-center gap-2 hover:bg-blue-200">
+                    <i data-lucide="send" class="w-5 h-5"></i>
+                    <span>Send to Telegram</span>
+                </button>
+            </div>
         </div>
     </div>
     
@@ -917,9 +925,11 @@
                 }
             } catch (e) {
                 console.error("Telegram WebApp script failed to initialize or user data not available.", e);
-                showAlert("Error initializing Telegram Mini App. Please try again from Telegram.");
-                loader.style.display = 'none';
-                return;
+                // Fallback for local testing
+                currentUserTg = { id: '12345678', first_name: 'Test', last_name: 'User', username: 'testuser' };
+                // showAlert("Error initializing Telegram Mini App. Please try again from Telegram.");
+                // loader.style.display = 'none';
+                // return;
             }
             
             setupEventListeners();
@@ -1403,7 +1413,7 @@
 
             containerEl.innerHTML = mailsWithStock.map(mail => {
                 const displayPrice = currentProfileMode === 'business' ? Math.max(0.01, mail.priceBdt - 0.01) : mail.priceBdt;
-                const isOutOfStock = mail.stock < (currentProfileMode === 'business' ? 5 : 1);
+                const isOutOfStock = mail.stock < 1;
                 const insufficientBalance = effectiveBalance < displayPrice;
                 const buyButtonDisabled = isOutOfStock || (insufficientBalance && currentProfileMode === 'personal');
                 
@@ -1418,11 +1428,11 @@
                 const businessBuySection = `
                     <div class="flex items-center gap-2">
                         <div class="flex-grow flex items-center border border-gray-300 rounded-lg">
-                            <button onclick="updateQty('${mail.stockKey}', -1)" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
-                            <input id="qty-${mail.stockKey}" type="number" min="5" max="20" value="5" class="w-full text-center font-bold border-l border-r bg-white" onchange="validateQty(this)">
-                            <button onclick="updateQty('${mail.stockKey}', 1)" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
+                            <button onclick="updateQty('${mail.stockKey}', -1, ${mail.stock})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
+                            <input id="qty-${mail.stockKey}" type="number" min="1" max="${mail.stock}" value="1" class="w-full text-center font-bold border-l border-r bg-white" onchange="validateQty(this, ${mail.stock})">
+                            <button onclick="updateQty('${mail.stockKey}', 1, ${mail.stock})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
                         </div>
-                        <button class="btn-gradient w-auto px-6 py-2 rounded-lg text-md flex-shrink-0" ${isOutOfStock ? 'disabled' : ''} onclick="handleBulkBuy('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}')">Buy</button>
+                        <button class="btn-gradient w-auto px-6 py-2 rounded-lg text-md flex-shrink-0" ${isOutOfStock ? 'disabled' : ''} onclick="handleBulkBuy('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}', ${mail.stock})">Buy</button>
                     </div>
                 `;
 
@@ -1516,16 +1526,19 @@
                         const date = purchase.purchasedAt.toDate().toLocaleString();
                         
                         if (purchase.type === 'bulk' && purchase.mails) {
-                            const bulkMailsJson = encodeURIComponent(JSON.stringify(purchase.mails));
+                            const mailsJson = JSON.stringify(purchase.mails);
                             const individualMailHtml = purchase.mails.map((mail, index) => {
                                 const mailJson = encodeURIComponent(JSON.stringify(mail));
                                 return `<div class="flex items-center justify-between bg-gray-50 p-2 rounded-md">
                                     <span class="font-mono text-sm text-gray-800 truncate flex-1">${mail.email} | ${mail.password}</span>
-                                    <button onclick="copyIndividualBulk('${mailJson}')" class="ml-2 p-1.5 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button>
+                                    <div class="flex items-center">
+                                       <button onclick="copyIndividualBulk('${mailJson}', false)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200" title="Copy Email/Pass"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button>
+                                       <button onclick="copyIndividualBulk('${mailJson}', true)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200" title="Full Copy"><i data-lucide="copy-plus" class="w-4 h-4 text-blue-600"></i></button>
+                                    </div>
                                 </div>`;
                             }).join('');
 
-                            return `<div class="card-bg p-4 rounded-xl space-y-3">
+                             return `<div class="card-bg p-4 rounded-xl space-y-3">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <h4 class="font-bold text-lg text-gray-800">${purchase.mailType} (Bulk)</h4>
@@ -1533,11 +1546,11 @@
                                         <p class="text-sm font-semibold mt-1">Purchased: ${purchase.mails.length} mails</p>
                                     </div>
                                     <div class="flex flex-col items-end gap-2">
-                                        <button onclick="copyAllBulk('${bulkMailsJson}')" class="bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-blue-200 flex items-center gap-1">
-                                            <i data-lucide="copy-check" class="w-3 h-3"></i> Copy All
+                                        <button onclick='handleXlsxCopy(${mailsJson})' class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-green-200 flex items-center gap-1">
+                                            <i data-lucide="table-2" class="w-3 h-3"></i> XLSX Copy
                                         </button>
-                                        <button onclick='downloadBulkPurchaseXLSX(${JSON.stringify(purchase.mails)})' class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-green-200 flex items-center gap-1">
-                                            <i data-lucide="download" class="w-3 h-3"></i> Download
+                                         <button onclick='handleSendToTelegram(${mailsJson}, "${purchase.mailType}")' class="bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-blue-200 flex items-center gap-1">
+                                            <i data-lucide="send" class="w-3 h-3"></i> Send
                                         </button>
                                     </div>
                                 </div>
@@ -2365,27 +2378,27 @@
             }
         }
         
-        window.updateQty = (stockKey, delta) => {
+        window.updateQty = (stockKey, delta, maxQty) => {
             const input = document.getElementById(`qty-${stockKey}`);
             let currentValue = parseInt(input.value, 10);
             currentValue += delta;
-            if (currentValue < 5) currentValue = 5;
-            if (currentValue > 20) currentValue = 20;
+            if (currentValue < 1) currentValue = 1;
+            if (currentValue > maxQty) currentValue = maxQty;
             input.value = currentValue;
         };
 
-        window.validateQty = (input) => {
+        window.validateQty = (input, maxQty) => {
             let value = parseInt(input.value, 10);
-            if (isNaN(value) || value < 5) input.value = 5;
-            if (value > 20) input.value = 20;
+            if (isNaN(value) || value < 1) input.value = 1;
+            if (value > maxQty) input.value = maxQty;
         };
         
-        window.handleBulkBuy = async function(mailType, originalPrice, stockKey) {
+        window.handleBulkBuy = async function(mailType, originalPrice, stockKey, availableStock) {
             const quantityInput = document.getElementById(`qty-${stockKey}`);
             const quantity = parseInt(quantityInput.value, 10);
             
-            if (isNaN(quantity) || quantity < 5 || quantity > 20) {
-                return showAlert("Please enter a quantity between 5 and 20.");
+            if (isNaN(quantity) || quantity < 1 || quantity > availableStock) {
+                return showAlert(`Please enter a quantity between 1 and ${availableStock}.`);
             }
 
             const singlePrice = Math.max(0.01, originalPrice - 0.01);
@@ -2419,7 +2432,7 @@
                     }
                     
                     if (effectiveBalance < totalCost) {
-                        throw new Error("Insufficient balance for this bulk purchase.");
+                        throw new Error(`Insufficient balance. You need ৳${totalCost.toFixed(2)} but have ৳${effectiveBalance.toFixed(2)}.`);
                     }
                     
                     const mailQuery = query(collection(db, stockKey), where("isSold", "==", false), limit(quantity));
@@ -2496,49 +2509,53 @@
             listEl.innerHTML = mails.map(mail => 
                 `<div class="grid grid-cols-2 gap-2 text-sm">
                     <span class="font-mono truncate text-gray-700">${mail.email}</span>
-                    <span class="font-mono truncate text-gray-700">${mail.password}</span>
+                    <span class="font-mono truncate text-gray-700">${mail.password || 'N/A'}</span>
                 </div>`
             ).join('');
             
-            const downloadBtn = document.getElementById('download-bulk-xlsx-btn');
-            const newBtn = downloadBtn.cloneNode(true);
-            downloadBtn.parentNode.replaceChild(newBtn, downloadBtn);
-            newBtn.addEventListener('click', () => downloadBulkPurchaseXLSX(mails));
+            const xlsxCopyBtn = document.getElementById('bulk-success-xlsx-copy-btn');
+            const sendTgBtn = document.getElementById('bulk-success-send-telegram-btn');
+            
+            xlsxCopyBtn.onclick = () => handleXlsxCopy(mails);
+            sendTgBtn.onclick = () => handleSendToTelegram(mails, mailType);
 
             document.getElementById('bulk-purchase-success-modal').classList.remove('hidden');
             lucide.createIcons();
         }
-
-        window.downloadBulkPurchaseXLSX = function(mails) {
-            try {
-                const dataForExcel = mails.map(p => { 
-                    return { 
-                        'Email': p.email, 
-                        'Password': p.password || 'N/A', 
-                        'Full Data': [p.email,p.password,p.refresh_token,p.client_id].filter(Boolean).join('|') 
-                    }; 
-                });
-                const ws = XLSX.utils.json_to_sheet(dataForExcel);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Bulk Purchase");
-                ws['!cols'] = [ {wch: 30}, {wch: 30}, {wch: 70} ];
-                XLSX.writeFile(wb, "Bulk_Purchase.xlsx");
-            } catch (error) {
-                showAlert("Failed to create XLSX file.");
-                console.error("XLSX export error:", error);
-            }
-        };
-
-        window.copyAllBulk = function(encodedMailsJson) {
-            const mails = JSON.parse(decodeURIComponent(encodedMailsJson));
-            const textToCopy = mails.map(m => [m.email, m.password, m.refresh_token, m.client_id].filter(Boolean).join('|')).join('\n');
-            copyToClipboard(textToCopy, null, 'সব মেইলের তথ্য কপি করা হয়েছে!');
+        
+        window.handleXlsxCopy = function(mails) {
+            const header = "Email\tPassword\tFull Data\n";
+            const textToCopy = header + mails.map(m => {
+                const fullData = [m.email, m.password, m.refresh_token, m.client_id].filter(Boolean).join('|');
+                return `${m.email}\t${m.password || ''}\t${fullData}`;
+            }).join('\n');
+            copyToClipboard(textToCopy, null, 'XLSX ডেটা কপি করা হয়েছে! এখন শীটে পেস্ট করুন।');
         }
 
-        window.copyIndividualBulk = function(encodedMailJson) {
+        window.handleSendToTelegram = function(mails, mailType) {
+            const messageHeader = `*Your Purchase: ${mails.length} x ${mailType}*\n\n`;
+            const messageBody = mails.map(m => `\`${[m.email, m.password, m.refresh_token, m.client_id].filter(Boolean).join('|')}\``).join('\n');
+            const fullMessage = messageHeader + messageBody;
+
+            // --- Backend Integration Point ---
+            // This is where you would make an API call to your backend server.
+            // The backend would then use the Telegram Bot API to send 'fullMessage' to the user's chat ID.
+            // Example: fetch('https://your-backend.com/send-message', { method: 'POST', body: JSON.stringify({ userId: userData.tgChatId, message: fullMessage }) });
+
+            showAlert(`এই তালিকাটি আপনার টেলিগ্রাম বটে পাঠানোর জন্য প্রস্তুত।\n\n(দ্রষ্টব্য: এই সুবিধাটি চালু করতে ব্যাকএন্ড ইন্টিগ্রেশন প্রয়োজন।)`);
+            console.log("Prepared message for Telegram:", fullMessage);
+        }
+
+        window.copyIndividualBulk = function(encodedMailJson, isFullCopy = false) {
             const mail = JSON.parse(decodeURIComponent(encodedMailJson));
-            const textToCopy = [mail.email, mail.password, mail.refresh_token, mail.client_id].filter(Boolean).join('|');
-            copyToClipboard(textToCopy, null, 'মেইলের তথ্য কপি করা হয়েছে!');
+            let textToCopy;
+            if (isFullCopy) {
+                textToCopy = [mail.email, mail.password, mail.refresh_token, mail.client_id].filter(Boolean).join('|');
+                copyToClipboard(textToCopy, null, 'সম্পূর্ণ তথ্য কপি করা হয়েছে!');
+            } else {
+                textToCopy = `${mail.email}|${mail.password || ''}`;
+                copyToClipboard(textToCopy, null, 'ইমেইল এবং পাসওয়ার্ড কপি করা হয়েছে!');
+            }
         }
 
     </script>
