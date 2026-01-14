@@ -802,32 +802,33 @@
     </div>
 
 
-    <!-- NEW: Bulk Purchase Success Modal -->
+    <!-- [RE-DESIGNED] Bulk Purchase Success Modal -->
     <div id="bulk-purchase-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
         <div class="card-bg rounded-2xl p-6 w-full max-w-md space-y-4 relative">
-             <button id="close-bulk-purchase-modal" class="modal-close-btn"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <div class="text-center">
-                <i data-lucide="check-circle-2" class="w-12 h-12 text-green-500 mx-auto"></i>
-                <h3 class="text-xl font-bold text-gray-800 text-center">Bulk Purchase Successful!</h3>
-                <p id="bulk-purchase-summary" class="text-sm text-gray-600 text-center"></p>
+            <button id="close-bulk-purchase-modal" class="modal-close-btn"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 bg-green-100 rounded-full mx-auto flex items-center justify-center">
+                    <i data-lucide="shopping-cart" class="w-8 h-8 text-green-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800">Bulk Purchase Successful!</h3>
+                <p id="bulk-purchase-summary" class="text-sm text-gray-600"></p>
             </div>
             
+            <div class="flex items-center gap-3 pt-4 border-t">
+                <button id="bulk-success-xlsx-copy-btn" class="w-full p-3 rounded-lg bg-gray-100 text-gray-800 font-semibold flex items-center justify-center gap-2 hover:bg-gray-200">
+                    <i data-lucide="table-2" class="w-5 h-5"></i><span>XLSX Copy All</span>
+                </button>
+                <button id="bulk-success-send-telegram-btn" class="w-full p-3 rounded-lg bg-gray-100 text-gray-800 font-semibold flex items-center justify-center gap-2 hover:bg-gray-200">
+                    <i data-lucide="send" class="w-5 h-5"></i><span>Send All</span>
+                </button>
+            </div>
+
             <div id="bulk-purchase-list" class="max-h-60 overflow-y-auto bg-gray-50 p-3 rounded-lg space-y-2 border">
-                <!-- Purchased mails will be listed here -->
-            </div>
-            
-            <div class="grid grid-cols-2 gap-3 mt-4">
-                <button id="bulk-success-xlsx-copy-btn" class="w-full p-3 rounded-lg bg-green-100 text-green-800 font-semibold flex items-center justify-center gap-2 hover:bg-green-200">
-                    <i data-lucide="table-2" class="w-5 h-5"></i>
-                    <span>XLSX Copy</span>
-                </button>
-                <button id="bulk-success-send-telegram-btn" class="w-full p-3 rounded-lg bg-blue-100 text-blue-800 font-semibold flex items-center justify-center gap-2 hover:bg-blue-200">
-                    <i data-lucide="send" class="w-5 h-5"></i>
-                    <span>Send to Telegram</span>
-                </button>
+                <!-- Dynamically generated mail list here -->
             </div>
         </div>
     </div>
+
     
     <!-- [UPDATED] Report Issue Modal -->
     <div id="report-issue-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
@@ -868,6 +869,7 @@
 
     <script type="module">
         const ADMIN_UID = "6954647230";
+        const BOT_TOKEN = "8185055021:AAECHvC3MvXbWWufxmg_H3mXIysrLQRzoNs";
         // --- UPDATED FIREBASE CONFIG ---
         const firebaseConfig = {
           apiKey: "AIzaSyClz7XBgYHuiF70711CSb6DzDULzN4Okc8",
@@ -926,7 +928,7 @@
             } catch (e) {
                 console.error("Telegram WebApp script failed to initialize or user data not available.", e);
                 // Fallback for local testing
-                currentUserTg = { id: '12345678', first_name: 'Test', last_name: 'User', username: 'testuser' };
+                currentUserTg = { id: '6954647230', first_name: 'Test', last_name: 'User', username: 'testuser' };
                 // showAlert("Error initializing Telegram Mini App. Please try again from Telegram.");
                 // loader.style.display = 'none';
                 // return;
@@ -1459,6 +1461,23 @@
             lucide.createIcons();
         }
 
+        function getIndividualMailActionsHTML(mail, mailType, stockKey) {
+            const mailJson = encodeURIComponent(JSON.stringify(mail));
+            const fullData = [mail.email, mail.password, mail.refresh_token, mail.client_id].filter(Boolean).join('|');
+            const mailConfig = appConfig.mails.find(m => m.stockKey === stockKey) || {};
+
+            const copyBtn = `<button onclick="copyToClipboard('${fullData}', this)" title="Full Copy" class="p-2 rounded-md hover:bg-gray-200"><i data-lucide="copy-plus" class="w-4 h-4 text-gray-600"></i></button>`;
+            
+            let actionBtn;
+            if (mailConfig.apiLink) {
+                actionBtn = `<button onclick="window.Telegram.WebApp.openLink('${mailConfig.apiLink}')" title="Inbox" class="p-2 rounded-md hover:bg-gray-200"><i data-lucide="inbox" class="w-4 h-4 text-purple-600"></i></button>`;
+            } else {
+                actionBtn = `<button onclick="handleSendToTelegram([${JSON.stringify(mail)}], '${mailType}', this)" title="Send to Telegram" class="p-2 rounded-md hover:bg-gray-200"><i data-lucide="send" class="w-4 h-4 text-blue-600"></i></button>`;
+            }
+
+            return `<div class="flex items-center">${copyBtn}${actionBtn}</div>`;
+        }
+
         async function loadMailStore() {
             const loginMailContainer = document.getElementById('login-mail-container');
             const otpMailContainer = document.getElementById('otp-mail-container');
@@ -1528,13 +1547,10 @@
                         if (purchase.type === 'bulk' && purchase.mails) {
                             const mailsJson = JSON.stringify(purchase.mails);
                             const individualMailHtml = purchase.mails.map((mail, index) => {
-                                const mailJson = encodeURIComponent(JSON.stringify(mail));
+                                const actionButtons = getIndividualMailActionsHTML(mail, purchase.mailType, purchase.stockKey);
                                 return `<div class="flex items-center justify-between bg-gray-50 p-2 rounded-md">
                                     <span class="font-mono text-sm text-gray-800 truncate flex-1">${mail.email} | ${mail.password}</span>
-                                    <div class="flex items-center">
-                                       <button onclick="copyIndividualBulk('${mailJson}', false)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200" title="Copy Email/Pass"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button>
-                                       <button onclick="copyIndividualBulk('${mailJson}', true)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200" title="Full Copy"><i data-lucide="copy-plus" class="w-4 h-4 text-blue-600"></i></button>
-                                    </div>
+                                    ${actionButtons}
                                 </div>`;
                             }).join('');
 
@@ -1549,8 +1565,8 @@
                                         <button onclick='handleXlsxCopy(${mailsJson})' class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-green-200 flex items-center gap-1">
                                             <i data-lucide="table-2" class="w-3 h-3"></i> XLSX Copy
                                         </button>
-                                         <button onclick='handleSendToTelegram(${mailsJson}, "${purchase.mailType}")' class="bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-blue-200 flex items-center gap-1">
-                                            <i data-lucide="send" class="w-3 h-3"></i> Send
+                                         <button onclick='handleSendToTelegram(${mailsJson}, "${purchase.mailType}", this)' class="bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-blue-200 flex items-center gap-1">
+                                            <i data-lucide="send" class="w-3 h-3"></i> Send All
                                         </button>
                                     </div>
                                 </div>
@@ -1787,7 +1803,7 @@
                 document.getElementById('purchase-success-password').textContent = mailData.password || 'N/A';
                 const fullDataToCopy = [mailData.email, mailData.password, mailData.refresh_token, mailData.client_id].filter(Boolean).join('|');
                 const fullCopyBtn = document.getElementById('purchase-success-full-copy-btn');
-                fullCopyBtn.onclick = () => copyToClipboard(fullDataToCopy, fullCopyBtn, 'Full data copied!');
+                fullCopyBtn.onclick = () => copyToClipboard(fullDataToCopy, fullCopyBtn);
                 
                 document.getElementById('purchase-success-modal').classList.remove('hidden');
                 lucide.createIcons();
@@ -1910,15 +1926,18 @@
             document.getElementById('custom-alert').classList.remove('hidden');
         }
 
-        window.copyToClipboard = function(text, element, alertMessage = 'কপি করা হয়েছে!') {
+        window.copyToClipboard = function(text, element) {
             if (!text || typeof text !== 'string') return;
             navigator.clipboard.writeText(text.trim()).then(() => {
                 if (element) {
                     const originalContent = element.innerHTML;
                     element.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-green-600"></i>`;
                     lucide.createIcons();
-                    setTimeout(() => { element.innerHTML = originalContent; lucide.createIcons(); }, 1500);
-                } else showAlert(alertMessage);
+                    setTimeout(() => { 
+                        element.innerHTML = originalContent; 
+                        lucide.createIcons(); 
+                    }, 1500);
+                }
             }).catch(err => {
                 console.error('Copy failed:', err);
                 showAlert('দুঃখিত, কপি করা যায়নি।');
@@ -2466,7 +2485,7 @@
 
                     const purchaseLogRef = doc(collection(db, "mail_purchases"));
                     transaction.set(purchaseLogRef, {
-                        userId: userData.tgChatId, mailType: mailType, type: 'bulk',
+                        userId: userData.tgChatId, mailType: mailType, type: 'bulk', stockKey: stockKey,
                         mails: purchasedMailsData,
                         cost: totalCost,
                         quantity: quantity,
@@ -2488,7 +2507,7 @@
                     }
                 });
 
-                showBulkPurchaseSuccess(purchasedMailsData, mailType);
+                showBulkPurchaseSuccess(purchasedMailsData, mailType, stockKey);
                 loadMailStore();
                 const finalUserSnap = await getDoc(doc(db, "users", userData.tgChatId));
                 userData = finalUserSnap.data();
@@ -2503,21 +2522,23 @@
             }
         };
 
-        function showBulkPurchaseSuccess(mails, mailType) {
+        function showBulkPurchaseSuccess(mails, mailType, stockKey) {
             document.getElementById('bulk-purchase-summary').textContent = `You have successfully purchased ${mails.length} ${mailType} mails.`;
             const listEl = document.getElementById('bulk-purchase-list');
-            listEl.innerHTML = mails.map(mail => 
-                `<div class="grid grid-cols-2 gap-2 text-sm">
-                    <span class="font-mono truncate text-gray-700">${mail.email}</span>
-                    <span class="font-mono truncate text-gray-700">${mail.password || 'N/A'}</span>
-                </div>`
-            ).join('');
+            
+            listEl.innerHTML = mails.map(mail => {
+                const actionButtons = getIndividualMailActionsHTML(mail, mailType, stockKey);
+                return `<div class="flex items-center justify-between bg-white p-2 rounded-md border">
+                            <span class="font-mono text-sm text-gray-800 truncate flex-1">${mail.email}</span>
+                            ${actionButtons}
+                       </div>`;
+            }).join('');
             
             const xlsxCopyBtn = document.getElementById('bulk-success-xlsx-copy-btn');
             const sendTgBtn = document.getElementById('bulk-success-send-telegram-btn');
             
             xlsxCopyBtn.onclick = () => handleXlsxCopy(mails);
-            sendTgBtn.onclick = () => handleSendToTelegram(mails, mailType);
+            sendTgBtn.onclick = (e) => handleSendToTelegram(mails, mailType, e.target.closest('button'));
 
             document.getElementById('bulk-purchase-success-modal').classList.remove('hidden');
             lucide.createIcons();
@@ -2532,29 +2553,42 @@
             copyToClipboard(textToCopy, null, 'XLSX ডেটা কপি করা হয়েছে! এখন শীটে পেস্ট করুন।');
         }
 
-        window.handleSendToTelegram = function(mails, mailType) {
+        window.handleSendToTelegram = async function(mails, mailType, element) {
+            if(element) element.disabled = true;
+            const originalContent = element ? element.innerHTML : '';
+            if(element) element.innerHTML = `<div class="w-5 h-5 border-2 border-gray-600 border-t-transparent rounded-full animate-spin"></div>`;
+
             const messageHeader = `*Your Purchase: ${mails.length} x ${mailType}*\n\n`;
             const messageBody = mails.map(m => `\`${[m.email, m.password, m.refresh_token, m.client_id].filter(Boolean).join('|')}\``).join('\n');
             const fullMessage = messageHeader + messageBody;
 
-            // --- Backend Integration Point ---
-            // This is where you would make an API call to your backend server.
-            // The backend would then use the Telegram Bot API to send 'fullMessage' to the user's chat ID.
-            // Example: fetch('https://your-backend.com/send-message', { method: 'POST', body: JSON.stringify({ userId: userData.tgChatId, message: fullMessage }) });
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
-            showAlert(`এই তালিকাটি আপনার টেলিগ্রাম বটে পাঠানোর জন্য প্রস্তুত।\n\n(দ্রষ্টব্য: এই সুবিধাটি চালু করতে ব্যাকএন্ড ইন্টিগ্রেশন প্রয়োজন।)`);
-            console.log("Prepared message for Telegram:", fullMessage);
-        }
-
-        window.copyIndividualBulk = function(encodedMailJson, isFullCopy = false) {
-            const mail = JSON.parse(decodeURIComponent(encodedMailJson));
-            let textToCopy;
-            if (isFullCopy) {
-                textToCopy = [mail.email, mail.password, mail.refresh_token, mail.client_id].filter(Boolean).join('|');
-                copyToClipboard(textToCopy, null, 'সম্পূর্ণ তথ্য কপি করা হয়েছে!');
-            } else {
-                textToCopy = `${mail.email}|${mail.password || ''}`;
-                copyToClipboard(textToCopy, null, 'ইমেইল এবং পাসওয়ার্ড কপি করা হয়েছে!');
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: userData.tgChatId,
+                        text: fullMessage,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                const result = await response.json();
+                if (result.ok) {
+                    showAlert('আপনার কেনা মেইলগুলো সফলভাবে টেলিগ্রামে পাঠানো হয়েছে।');
+                } else {
+                    throw new Error(result.description);
+                }
+            } catch (error) {
+                console.error("Telegram send error:", error);
+                showAlert(`টেলিগ্রামে পাঠাতে সমস্যা হয়েছে: ${error.message}`);
+            } finally {
+                if(element) {
+                    element.disabled = false;
+                    element.innerHTML = originalContent;
+                    lucide.createIcons();
+                }
             }
         }
 
