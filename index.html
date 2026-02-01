@@ -263,44 +263,74 @@
             width: 32px;
             height: 32px;
         }
-
-        /* NEW: Mail Page View Switcher */
-        .mail-view-switcher {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.5rem;
-            background-color: #e5e7eb;
-            padding: 0.5rem;
-            border-radius: 0.75rem;
-        }
-        .mail-view-switcher button {
-            padding: 0.75rem;
-            border-radius: 0.5rem;
+        
+        /* NEW STYLES FOR MAIL PAGE */
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
             font-weight: 600;
-            color: #4b5563;
-            transition: all 0.3s ease;
-            border: none;
-            background-color: transparent;
-        }
-        .mail-view-switcher button.active {
+            transition: all 0.2s ease;
+            border: 1px solid #d1d5db;
             background-color: #ffffff;
-            color: #007bff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            color: #4b5563;
         }
-
-        /* --- UPDATED & FIXED CSS for Mail Views --- */
-        #mail-views-container {
+        .filter-btn.active {
+            background-color: #007bff;
+            color: #ffffff;
+            border-color: #007bff;
+        }
+        .toggle-switch {
             position: relative;
-            overflow: hidden;
-            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-block;
+            width: 120px;
+            height: 40px;
         }
-        .mail-view {
-            width: 100%;
-            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
             position: absolute;
+            cursor: pointer;
             top: 0;
             left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e5e7eb;
+            transition: .4s;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding: 0 8px;
+            font-weight: bold;
+            color: #4b5563;
         }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 32px;
+            width: 52px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 32px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        input:checked + .slider {
+            background-color: #007bff;
+        }
+        input:checked + .slider:before {
+            transform: translateX(56px);
+        }
+        .slider-text { z-index: 1; }
+        .tap-text.active, .bulk-text.active { color: #007bff; }
+        input:checked ~ .label-texts .bulk-text { color: white; }
+        input:not(:checked) ~ .label-texts .tap-text { color: white; }
+
+
     </style>
 </head>
 <body class="max-w-md mx-auto">
@@ -311,7 +341,7 @@
             <div class="logo-container">
                  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600 mx-auto"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
             </div>
-            <h1 class="text-accent-gradient loader-text mt-4">Welcome to 🅐🅟 𝗧𝗘𝗖𝗛 ⚡ 𝗠𝗔𝗥𝗞𝗘𝗧 🛍️</h1>
+            <h1 class="text-accent-gradient loader-text mt-4">🅐🅟 𝗧𝗘𝗖𝗛 ⚡ 𝗠𝗔𝗥𝗞𝗘𝗧 🛍️</h1>
             <p id="loader-status-text" class="loader-subtext mt-2">Initializing your session...</p>
         </div>
     </div>
@@ -491,17 +521,31 @@
             <!-- =========== END OF DEPOSIT PAGE =========== -->
 
 
-            <!-- =========== UPDATED MAIL PAGE =========== -->
+            <!-- =========== UPDATED MAIL PAGE (NEW STRUCTURE) =========== -->
             <div id="mail-page" class="sub-page">
                 <div class="p-4 space-y-6">
-                    <div class="mail-view-switcher">
-                        <button id="login-mail-btn" class="active">LOGIN MAIL</button>
-                        <button id="otp-mail-btn">OTP MAIL</button>
+                    <!-- NEW TAP/BULK Switch -->
+                    <div class="flex justify-center items-center gap-4">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="purchase-mode-toggle">
+                            <span class="slider"></span>
+                            <div class="absolute inset-0 flex items-center justify-around text-sm font-bold pointer-events-none label-texts">
+                                <span class="tap-text text-white">TAP</span>
+                                <span class="bulk-text text-gray-600">BULK</span>
+                            </div>
+                        </label>
                     </div>
 
-                    <div id="mail-views-container">
-                        <div id="login-mail-container" class="mail-view space-y-4"></div>
-                        <div id="otp-mail-container" class="mail-view space-y-4"></div>
+                    <!-- NEW Category Filters -->
+                    <div id="mail-category-filters" class="flex justify-center items-center gap-2 flex-wrap">
+                        <button class="filter-btn active" data-category="all">All</button>
+                        <button class="filter-btn" data-category="login">Login Mail</button>
+                        <button class="filter-btn" data-category="otp">OTP Mail</button>
+                    </div>
+
+                    <!-- SINGLE Container for all mails -->
+                    <div id="all-mails-container" class="space-y-4">
+                        <!-- Mail cards will be dynamically inserted here by JavaScript -->
                     </div>
                     
                     <div class="mt-8">
@@ -925,6 +969,10 @@
         let countdownInterval = null;
         let currentProfileMode = 'personal'; 
         
+        // --- NEW STATE VARIABLES FOR MAIL PAGE ---
+        let purchaseMode = 'tap'; // 'tap' or 'bulk'
+        let currentMailCategory = 'all'; // 'all', 'login', or 'otp'
+        
         const loader = document.getElementById('loader');
         const loaderStatusText = document.getElementById('loader-status-text');
         const channelGate = document.getElementById('channel-join-gate');
@@ -988,12 +1036,6 @@
             const url = `https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${channelId}&user_id=${userId}`;
             
             try {
-                // IMPORTANT SECURITY NOTE:
-                // This client-side API call exposes your BOT_TOKEN.
-                // For a production app, this check should be done on a server (e.g., a Cloud Function)
-                // where the token is kept secret. The web app would then call your server endpoint.
-                // This implementation is for demonstration based on the request constraints.
-                
                 const response = await fetch(url);
                 const data = await response.json();
                 
@@ -1306,49 +1348,37 @@
             const hidePurchaseSuccessModal = () => document.getElementById('purchase-success-modal').classList.add('hidden');
             document.getElementById('purchase-success-buy-again-btn').addEventListener('click', hidePurchaseSuccessModal);
             document.getElementById('close-purchase-success-modal').addEventListener('click', hidePurchaseSuccessModal);
+            
+            // --- NEW Event Listeners for Mail Page ---
+            document.getElementById('purchase-mode-toggle').addEventListener('change', (e) => {
+                purchaseMode = e.target.checked ? 'bulk' : 'tap';
+                const tapText = document.querySelector('.tap-text');
+                const bulkText = document.querySelector('.bulk-text');
+                if(purchaseMode === 'bulk') {
+                    tapText.style.color = '#4b5563';
+                    bulkText.style.color = 'white';
+                } else {
+                    tapText.style.color = 'white';
+                    bulkText.style.color = '#4b5563';
+                }
+                loadMailStore(); // Re-render the list with the new mode
+            });
 
-            document.getElementById('login-mail-btn').addEventListener('click', () => switchMailView('login'));
-            document.getElementById('otp-mail-btn').addEventListener('click', () => switchMailView('otp'));
+            document.getElementById('mail-category-filters').addEventListener('click', (e) => {
+                if (e.target.matches('.filter-btn')) {
+                    document.querySelectorAll('#mail-category-filters .filter-btn').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentMailCategory = e.target.dataset.category;
+                    loadMailStore(); // Re-render with the new category
+                }
+            });
+
 
             document.getElementById('report-issue-form').addEventListener('submit', handleReportSubmit);
             
             document.getElementById('personal-mode-btn').addEventListener('click', () => handleProfileSwitch('personal'));
             document.getElementById('business-mode-btn').addEventListener('click', () => handleProfileSwitch('business'));
             document.getElementById('close-bulk-purchase-modal').addEventListener('click', () => document.getElementById('bulk-purchase-success-modal').classList.add('hidden'));
-        }
-
-        function adjustMailViewContainerHeight() {
-            setTimeout(() => {
-                const container = document.getElementById('mail-views-container');
-                const loginView = document.getElementById('login-mail-container');
-                const otpView = document.getElementById('otp-mail-container');
-                
-                const activeView = loginView.style.transform === 'translateX(0%)' ? loginView : otpView;
-                
-                if (container && activeView) {
-                    container.style.height = `${activeView.scrollHeight}px`;
-                }
-            }, 50); 
-        }
-        
-        function switchMailView(view) {
-            const loginBtn = document.getElementById('login-mail-btn');
-            const otpBtn = document.getElementById('otp-mail-btn');
-            const loginContainer = document.getElementById('login-mail-container');
-            const otpContainer = document.getElementById('otp-mail-container');
-
-            if (view === 'login') {
-                loginBtn.classList.add('active');
-                otpBtn.classList.remove('active');
-                loginContainer.style.transform = 'translateX(0%)';
-                otpContainer.style.transform = 'translateX(100%)';
-            } else { // otp
-                loginBtn.classList.remove('active');
-                otpBtn.classList.add('active');
-                loginContainer.style.transform = 'translateX(-100%)';
-                otpContainer.style.transform = 'translateX(0%)';
-            }
-            adjustMailViewContainerHeight();
         }
 
         function listenForNotifications() {
@@ -1501,6 +1531,7 @@
             } catch (error) { console.error(`Error getting stock count for ${collectionName}:`, error); return 0; }
         }
         
+        // --- MODIFIED RENDER FUNCTION ---
         async function renderMailList(mails, containerEl, effectiveBalance) {
             if (!mails || mails.length === 0) {
                 containerEl.innerHTML = `<p class="text-center text-gray-500 pt-10">এই ক্যাটাগরিতে কোনো মেইল উপলব্ধ নেই।</p>`;
@@ -1520,7 +1551,6 @@
 
                 const isOutOfStock = mail.stock < 1;
                 const insufficientBalance = effectiveBalance < displayPrice;
-                const buyButtonDisabled = isOutOfStock || (insufficientBalance && currentProfileMode === 'personal');
                 
                 const validityTagHtml = (mail.expirationHours != null) ? `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full">${mail.expirationHours}h validity</span>` : '';
                 const apiButtonHtml = mail.apiLink ? `<button onclick="openApiLink('${mail.apiLink}')" class="text-blue-600 font-semibold">API</button>` : '<span class="text-gray-400 font-semibold">API</span>';
@@ -1528,9 +1558,13 @@
                 const encodedDetails = encodeURIComponent(mail.details || '');
                 const encodedFeatures = encodeURIComponent(JSON.stringify(mail.featureList || []));
 
-                const personalBuyButton = `<button class="${buyButtonDisabled ? 'bg-gray-400 cursor-not-allowed' : 'btn-gradient'} w-full py-2 rounded-lg text-md" ${buyButtonDisabled ? 'disabled' : ''} onclick="buyMail('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}')">Buy Now</button>`;
-                
-                const businessBuySection = `
+                // --- DYNAMIC BUY SECTION BASED ON purchaseMode ---
+                let buySectionHtml = '';
+                if (purchaseMode === 'tap') {
+                    const buyButtonDisabled = isOutOfStock || insufficientBalance;
+                    buySectionHtml = `<button class="${buyButtonDisabled ? 'bg-gray-400 cursor-not-allowed' : 'btn-gradient'} w-full py-2 rounded-lg text-md" ${buyButtonDisabled ? 'disabled' : ''} onclick="buyMail('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}')">Buy Now</button>`;
+                } else { // bulk mode
+                    buySectionHtml = `
                     <div class="flex items-center gap-2">
                         <div class="flex-grow flex items-center border border-gray-300 rounded-lg">
                             <button onclick="updateQty('${mail.stockKey}', -1, ${mail.stock})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
@@ -1538,8 +1572,8 @@
                             <button onclick="updateQty('${mail.stockKey}', 1, ${mail.stock})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
                         </div>
                         <button class="btn-gradient w-auto px-6 py-2 rounded-lg text-md flex-shrink-0" ${isOutOfStock ? 'disabled' : ''} onclick="handleBulkBuy('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}', ${mail.stock})">Buy</button>
-                    </div>
-                `;
+                    </div>`;
+                }
 
                 return `<div class="card-bg p-4 rounded-xl space-y-3">
                     <div class="flex justify-between items-center">
@@ -1558,7 +1592,7 @@
                         <div class="py-2"><p class="text-gray-500 text-sm">Price</p><p class="font-bold text-lg text-blue-600">৳${displayPrice.toFixed(2)}</p></div>
                         <div class="py-2"><p class="text-gray-500 text-sm">Stock</p><p class="font-bold text-lg text-green-600">${mail.stock}</p></div>
                     </div>
-                    ${currentProfileMode === 'business' ? businessBuySection : personalBuyButton}
+                    ${buySectionHtml}
                 </div>`;
             }).join('');
             lucide.createIcons();
@@ -1581,13 +1615,12 @@
             return `<div class="flex items-center">${copyBtn}${actionBtn}</div>`;
         }
 
+        // --- REFACTORED loadMailStore FUNCTION ---
         async function loadMailStore() {
-            const loginMailContainer = document.getElementById('login-mail-container');
-            const otpMailContainer = document.getElementById('otp-mail-container');
+            const allMailsContainer = document.getElementById('all-mails-container');
             const historyListEl = document.getElementById('mail-purchase-history');
             
-            loginMailContainer.innerHTML = getLoadingHTML();
-            otpMailContainer.innerHTML = getLoadingHTML();
+            allMailsContainer.innerHTML = getLoadingHTML();
             historyListEl.innerHTML = getLoadingHTML();
             
             try {
@@ -1602,17 +1635,18 @@
                     if (teamLeaderSnap.exists()) effectiveBalance += teamLeaderSnap.data().balance;
                 }
 
+                // Filter mails based on the selected category
                 const allMails = appConfig.mails || [];
-                const loginMails = allMails.filter(m => m.category === 'login' || !m.category);
-                const otpMails = allMails.filter(m => m.category === 'otp');
+                const filteredMails = allMails.filter(m => {
+                    if (currentMailCategory === 'all') return true;
+                    if (currentMailCategory === 'login') return m.category === 'login' || !m.category;
+                    if (currentMailCategory === 'otp') return m.category === 'otp';
+                    return false;
+                });
 
-                await Promise.all([
-                    renderMailList(loginMails, loginMailContainer, effectiveBalance),
-                    renderMailList(otpMails, otpMailContainer, effectiveBalance)
-                ]);
+                await renderMailList(filteredMails, allMailsContainer, effectiveBalance);
                 
-                switchMailView('login');
-
+                // History loading remains the same
                 const twentyFourHoursAgo = Timestamp.fromDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
                 const q = query(collection(db, "mail_purchases"), where("userId", "==", userData.tgChatId), where("purchasedAt", ">=", twentyFourHoursAgo), orderBy("purchasedAt", "desc"));
                 const querySnapshot = await getDocs(q);
@@ -1696,8 +1730,7 @@
                 lucide.createIcons();
 
             } catch(e) {
-                 loginMailContainer.innerHTML = '<p class="text-center text-red-600">মেইল লোড করা যায়নি।</p>';
-                 otpMailContainer.innerHTML = '<p class="text-center text-red-600">মেইল লোড করা যায়নি।</p>';
+                 allMailsContainer.innerHTML = '<p class="text-center text-red-600">মেইল লোড করা যায়নি।</p>';
                  historyListEl.innerHTML = '<p class="text-center text-red-600">হিস্টি লোড করা যায়নি।</p>';
                  console.error(e);
             }
@@ -2284,7 +2317,7 @@
             document.getElementById('report-purchase-cost').value = cost;
             document.getElementById('report-purchase-saleId').value = saleId;
             document.getElementById('report-issue-form').reset();
-            document.getElementById('report-issue-modal').classList.add('hidden');
+            document.getElementById('report-issue-modal').classList.remove('hidden');
         }
 
         async function handleReportSubmit(event) {
