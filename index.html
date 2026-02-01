@@ -275,16 +275,16 @@
             height: 32px;
         }
 
-        /* NEW: Mail Page Category Tabs */
-        .mail-category-tabs {
-            display: flex;
+        /* NEW: Mail Page View Switcher */
+        .mail-view-switcher {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 0.5rem;
             background-color: #e5e7eb;
             padding: 0.5rem;
             border-radius: 0.75rem;
         }
-        .mail-category-tabs button {
-            flex-grow: 1;
+        .mail-view-switcher button {
             padding: 0.75rem;
             border-radius: 0.5rem;
             font-weight: 600;
@@ -293,10 +293,24 @@
             border: none;
             background-color: transparent;
         }
-        .mail-category-tabs button.active {
+        .mail-view-switcher button.active {
             background-color: #ffffff;
             color: #007bff;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* --- UPDATED & FIXED CSS for Mail Views --- */
+        #mail-views-container {
+            position: relative;
+            overflow: hidden;
+            transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .mail-view {
+            width: 100%;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            top: 0;
+            left: 0;
         }
     </style>
 </head>
@@ -308,7 +322,7 @@
             <div class="logo-container">
                  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600 mx-auto"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
             </div>
-            <h1 class="text-accent-gradient loader-text mt-4">Welcome to 🅐🅟 𝗧𝗘𝗖𝗛 ⚡ 𝗠𝗔𝗥𝗞𝗘𝗧 🛍️</h1>
+            <h1 class="text-accent-gradient loader-text mt-4">🅐🅟 𝗧𝗘𝗖𝗛 ⚡ 𝗠𝗔𝗥𝗞𝗘𝗧 🛍️</h1>
             <p id="loader-status-text" class="loader-subtext mt-2">Initializing your premium session...</p>
             <div class="progress-bar"><div class="progress-bar-inner"></div></div>
         </div>
@@ -476,19 +490,16 @@
 
             <!-- =========== UPDATED MAIL PAGE =========== -->
             <div id="mail-page" class="sub-page">
-                <div class="p-4 space-y-4">
-                    <div class="mail-category-tabs">
-                        <button data-category="all" class="active">ALL</button>
-                        <button data-category="login">LOGIN MAIL</button>
-                        <button data-category="otp">OTP MAIL</button>
+                <div class="p-4 space-y-6">
+                    <div class="mail-view-switcher">
+                        <button id="login-mail-btn" class="active">LOGIN MAIL</button>
+                        <button id="otp-mail-btn">OTP MAIL</button>
                     </div>
-                     <p class="text-center text-sm text-gray-600">
-                        কোনো সমস্যা? আমাদের 
-                        <button id="mail-page-support-btn" class="font-semibold text-blue-600 hover:underline">সাপোর্ট সেন্টারে</button> 
-                        যোগাযোগ করুন।
-                    </p>
 
-                    <div id="mail-list-container" class="space-y-4 pt-2"></div>
+                    <div id="mail-views-container">
+                        <div id="login-mail-container" class="mail-view space-y-4"></div>
+                        <div id="otp-mail-container" class="mail-view space-y-4"></div>
+                    </div>
                     
                     <div class="mt-8">
                         <div class="flex justify-between items-center mb-3">
@@ -758,7 +769,40 @@
             <button id="insufficient-balance-deposit-btn" class="w-full p-3 rounded-lg btn-gradient mt-4">Deposit Now</button>
         </div>
     </div>
-    
+
+    <!-- =========== NEW PREMIUM PURCHASE SUCCESS MODAL =========== -->
+    <div id="purchase-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
+        <div class="card-bg rounded-2xl p-6 w-full max-w-sm space-y-4 relative">
+            <button id="close-purchase-success-modal" class="modal-close-btn">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="text-center">
+                <i data-lucide="check-circle-2" class="w-12 h-12 text-green-500 mx-auto"></i>
+                <h3 class="text-xl font-bold text-gray-800 mt-2">সফলভাবে কেনা হয়েছে!</h3>
+                <p class="text-xs text-gray-500 pt-2">এই তথ্য আপনার ক্রয় হিস্টিতে সেভ করা হয়েছে।</p>
+            </div>
+            
+            <div class="space-y-3 pt-2">
+                <div class="flex items-center justify-between bg-gray-100 p-2.5 rounded-lg">
+                    <span class="font-bold text-gray-500 text-sm mr-2">Email:</span>
+                    <span class="font-mono text-sm text-gray-800 truncate" id="purchase-success-email"></span>
+                    <button onclick="copyToClipboard(document.getElementById('purchase-success-email').textContent, this)" class="ml-2 p-2 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button>
+                </div>
+                <div class="flex items-center justify-between bg-gray-100 p-2.5 rounded-lg">
+                    <span class="font-bold text-gray-500 text-sm mr-2">Pass:</span>
+                    <span class="font-mono text-sm text-gray-800" id="purchase-success-password"></span>
+                    <button onclick="copyToClipboard(document.getElementById('purchase-success-password').textContent, this)" class="ml-2 p-2 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button>
+                </div>
+            </div>
+             <button id="purchase-success-full-copy-btn" class="w-full p-3 rounded-lg bg-gray-200 text-gray-800 font-semibold flex items-center justify-center gap-2 hover:bg-gray-300">
+                <i data-lucide="copy-plus" class="w-5 h-5"></i>
+                <span>FULL COPY</span>
+            </button>
+            <button id="purchase-success-buy-again-btn" class="w-full p-3 rounded-lg btn-gradient mt-2">আবার কিনুন</button>
+        </div>
+    </div>
+
+
     <!-- [RE-DESIGNED] Bulk Purchase Success Modal -->
     <div id="bulk-purchase-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
         <div class="card-bg rounded-2xl p-6 w-full max-w-md space-y-4 relative">
@@ -767,7 +811,7 @@
                 <div class="w-16 h-16 bg-green-100 rounded-full mx-auto flex items-center justify-center">
                     <i data-lucide="shopping-cart" class="w-8 h-8 text-green-600"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800">Purchase Successful!</h3>
+                <h3 class="text-2xl font-bold text-gray-800">Bulk Purchase Successful!</h3>
                 <p id="bulk-purchase-summary" class="text-sm text-gray-600"></p>
             </div>
             
@@ -1120,7 +1164,6 @@
             document.getElementById('hamburger-menu-btn').addEventListener('click', toggleMenu);
             document.getElementById('menu-overlay').addEventListener('click', toggleMenu);
             document.getElementById('go-to-support-btn').addEventListener('click', toggleMenu);
-            document.getElementById('mail-page-support-btn').addEventListener('click', toggleMenu);
             
             document.getElementById('more-features-btn').addEventListener('click', handleFeaturesClick);
             document.getElementById('report-history-btn').addEventListener('click', () => navigateTo('report-history-page'));
@@ -1138,39 +1181,50 @@
             });
             document.getElementById('alert-ok-btn').addEventListener('click', () => { document.getElementById('custom-alert').classList.add('hidden'); });
 
-            document.getElementById('close-bulk-purchase-modal').addEventListener('click', () => document.getElementById('bulk-purchase-success-modal').classList.add('hidden'));
+            const hidePurchaseSuccessModal = () => document.getElementById('purchase-success-modal').classList.add('hidden');
+            document.getElementById('purchase-success-buy-again-btn').addEventListener('click', hidePurchaseSuccessModal);
+            document.getElementById('close-purchase-success-modal').addEventListener('click', hidePurchaseSuccessModal);
 
-            document.querySelectorAll('.mail-category-tabs button').forEach(btn => {
-                btn.addEventListener('click', () => switchMailView(btn.dataset.category));
-            });
+            document.getElementById('login-mail-btn').addEventListener('click', () => switchMailView('login'));
+            document.getElementById('otp-mail-btn').addEventListener('click', () => switchMailView('otp'));
 
             document.getElementById('report-issue-form').addEventListener('submit', handleReportSubmit);
+            
+            document.getElementById('close-bulk-purchase-modal').addEventListener('click', () => document.getElementById('bulk-purchase-success-modal').classList.add('hidden'));
+        }
+
+        function adjustMailViewContainerHeight() {
+            setTimeout(() => {
+                const container = document.getElementById('mail-views-container');
+                const loginView = document.getElementById('login-mail-container');
+                const otpView = document.getElementById('otp-mail-container');
+                
+                const activeView = loginView.style.transform === 'translateX(0%)' ? loginView : otpView;
+                
+                if (container && activeView) {
+                    container.style.height = `${activeView.scrollHeight}px`;
+                }
+            }, 50); 
         }
         
-        async function switchMailView(category) {
-            document.querySelectorAll('.mail-category-tabs button').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.category === category);
-            });
+        function switchMailView(view) {
+            const loginBtn = document.getElementById('login-mail-btn');
+            const otpBtn = document.getElementById('otp-mail-btn');
+            const loginContainer = document.getElementById('login-mail-container');
+            const otpContainer = document.getElementById('otp-mail-container');
 
-            const mailListContainer = document.getElementById('mail-list-container');
-            mailListContainer.innerHTML = getLoadingHTML();
-            
-            const allMails = appConfig.mails || [];
-            let filteredMails;
-            
-            if (category === 'all') {
-                filteredMails = allMails;
-            } else {
-                filteredMails = allMails.filter(m => m.category === category || (category === 'login' && !m.category));
+            if (view === 'login') {
+                loginBtn.classList.add('active');
+                otpBtn.classList.remove('active');
+                loginContainer.style.transform = 'translateX(0%)';
+                otpContainer.style.transform = 'translateX(100%)';
+            } else { // otp
+                loginBtn.classList.remove('active');
+                otpBtn.classList.add('active');
+                loginContainer.style.transform = 'translateX(-100%)';
+                otpContainer.style.transform = 'translateX(0%)';
             }
-
-            let effectiveBalance = userData.balance;
-            if (userData.linkedBy) {
-                const teamLeaderSnap = await getDoc(doc(db, "users", userData.linkedBy));
-                if (teamLeaderSnap.exists()) effectiveBalance += teamLeaderSnap.data().balance;
-            }
-
-            await renderMailList(filteredMails, mailListContainer, effectiveBalance);
+            adjustMailViewContainerHeight();
         }
 
         function listenForNotifications() {
@@ -1324,7 +1378,6 @@
         }
         
         async function renderMailList(mails, containerEl, effectiveBalance) {
-            containerEl.innerHTML = ''; // Clear previous content
             if (!mails || mails.length === 0) {
                 containerEl.innerHTML = `<p class="text-center text-gray-500 pt-10">এই ক্যাটাগরিতে কোনো মেইল উপলব্ধ নেই।</p>`;
                 return;
@@ -1332,41 +1385,30 @@
 
             const stockPromises = mails.map(mail => getStockCount(mail.stockKey));
             const stockCounts = await Promise.all(stockPromises);
-            let mailsWithStock = mails.map((mail, index) => ({ ...mail, stock: stockCounts[index] }));
-            
-            // Sort: In-stock items first, then out-of-stock items
-            mailsWithStock.sort((a, b) => (b.stock > 0 ? 1 : 0) - (a.stock > 0 ? 1 : 0));
+            let mailsWithStock = mails.map((mail, index) => ({ ...mail, stock: stockCounts[index] })).sort((a, b) => b.stock - a.stock);
 
             containerEl.innerHTML = mailsWithStock.map(mail => {
                 const displayPrice = mail.priceBdt;
                 const isOutOfStock = mail.stock < 1;
                 
-                const maxAffordableQty = displayPrice > 0 ? Math.floor(effectiveBalance / displayPrice) : mail.stock;
-                const maxQty = Math.min(mail.stock, maxAffordableQty);
-
                 const validityTagHtml = (mail.expirationHours != null) ? `<span class="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-1 rounded-full">${mail.expirationHours}h validity</span>` : '';
                 const apiButtonHtml = mail.apiLink ? `<button onclick="openApiLink('${mail.apiLink}')" class="text-blue-600 font-semibold">API</button>` : '<span class="text-gray-400 font-semibold">API</span>';
                 
                 const encodedDetails = encodeURIComponent(mail.details || '');
                 const encodedFeatures = encodeURIComponent(JSON.stringify(mail.featureList || []));
-                
-                let buySectionHtml = '';
-                if(isOutOfStock) {
-                    buySectionHtml = '<p class="text-center text-red-500 font-bold py-3.5">Stock Out</p>';
-                } else {
-                     buySectionHtml = `
-                        <div class="flex items-center gap-2">
-                            <div class="flex-grow flex items-center border border-gray-300 rounded-lg">
-                                <button onclick="updateQty('${mail.stockKey}', -1, ${maxQty})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
-                                <input id="qty-${mail.stockKey}" type="number" min="1" max="${maxQty}" value="1" class="w-full text-center font-bold border-l border-r bg-white" oninput="validateQty(this, ${maxQty})">
-                                <button onclick="updateQty('${mail.stockKey}', 1, ${maxQty})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
-                            </div>
-                            <button class="btn-gradient w-auto px-6 py-2 rounded-lg text-md flex-shrink-0" onclick="handleBulkBuy('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}', ${maxQty})">Buy</button>
-                        </div>
-                    `;
-                }
 
-                return `<div class="card-bg p-4 rounded-xl space-y-3 ${isOutOfStock ? 'opacity-60' : ''}">
+                const buySection = `
+                    <div class="flex items-center gap-2">
+                        <div class="flex-grow flex items-center border border-gray-300 rounded-lg">
+                            <button onclick="updateQty('${mail.stockKey}', -1, ${mail.stock})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
+                            <input id="qty-${mail.stockKey}" type="number" min="1" max="${mail.stock}" value="1" class="w-full text-center font-bold border-l border-r bg-white" onchange="validateQty(this, ${mail.stock})">
+                            <button onclick="updateQty('${mail.stockKey}', 1, ${mail.stock})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
+                        </div>
+                        <button class="btn-gradient w-auto px-6 py-2 rounded-lg text-md flex-shrink-0" ${isOutOfStock ? 'disabled' : ''} onclick="handleBulkBuy('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}', ${mail.stock})">Buy</button>
+                    </div>
+                `;
+
+                return `<div class="card-bg p-4 rounded-xl space-y-3">
                     <div class="flex justify-between items-center">
                         <div class="flex items-center gap-3">
                             <img src="${mail.logoUrl}" class="w-8 h-8 rounded-lg object-cover" alt="${mail.type} logo">
@@ -1381,9 +1423,9 @@
                     <div class="grid grid-cols-3 text-center items-center pt-2 border-t border-gray-200">
                         <div class="py-2">${apiButtonHtml}</div>
                         <div class="py-2"><p class="text-gray-500 text-sm">Price</p><p class="font-bold text-lg text-blue-600">৳${displayPrice.toFixed(2)}</p></div>
-                        <div class="py-2"><p class="text-gray-500 text-sm">Stock</p><p class="font-bold text-lg ${isOutOfStock ? 'text-red-600' : 'text-green-600'}">${mail.stock}</p></div>
+                        <div class="py-2"><p class="text-gray-500 text-sm">Stock</p><p class="font-bold text-lg text-green-600">${mail.stock}</p></div>
                     </div>
-                    ${buySectionHtml}
+                    ${buySection}
                 </div>`;
             }).join('');
             lucide.createIcons();
@@ -1407,16 +1449,35 @@
         }
 
         async function loadMailStore() {
+            const loginMailContainer = document.getElementById('login-mail-container');
+            const otpMailContainer = document.getElementById('otp-mail-container');
             const historyListEl = document.getElementById('mail-purchase-history');
+            
+            loginMailContainer.innerHTML = getLoadingHTML();
+            otpMailContainer.innerHTML = getLoadingHTML();
             historyListEl.innerHTML = getLoadingHTML();
             
             try {
                 const userSnap = await getDoc(doc(db, "users", userData.tgChatId));
                 userData = userSnap.data();
                 updateUI();
+
+                let effectiveBalance = userData.balance;
+                if (userData.linkedBy) {
+                    const teamLeaderSnap = await getDoc(doc(db, "users", userData.linkedBy));
+                    if (teamLeaderSnap.exists()) effectiveBalance += teamLeaderSnap.data().balance;
+                }
+
+                const allMails = appConfig.mails || [];
+                const loginMails = allMails.filter(m => m.category === 'login' || !m.category);
+                const otpMails = allMails.filter(m => m.category === 'otp');
+
+                await Promise.all([
+                    renderMailList(loginMails, loginMailContainer, effectiveBalance),
+                    renderMailList(otpMails, otpMailContainer, effectiveBalance)
+                ]);
                 
-                // Load the mail list with 'all' category by default
-                await switchMailView('all');
+                switchMailView('login');
 
                 const twentyFourHoursAgo = Timestamp.fromDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
                 const q = query(collection(db, "mail_purchases"), where("userId", "==", userData.tgChatId), where("purchasedAt", ">=", twentyFourHoursAgo), orderBy("purchasedAt", "desc"));
@@ -1452,53 +1513,57 @@
                     historyListEl.innerHTML = activePurchases.map(purchase => {
                         const date = purchase.purchasedAt.toDate().toLocaleString();
                         
-                        let purchaseTitle = purchase.mailType;
                         if (purchase.type === 'bulk' && purchase.mails) {
-                            purchaseTitle += ` (x${purchase.mails.length})`;
-                        }
-
-                        const reportStatus = reportStatusMap.get(purchase.id);
-                        let reportButtonHtml;
-                        switch (reportStatus) {
-                            case 'approved': reportButtonHtml = `<button class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="check-circle" class="w-3 h-3"></i> Refunded</button>`; break;
-                            case 'rejected': reportButtonHtml = `<button class="bg-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="x-circle" class="w-3 h-3"></i> Rejected</button>`; break;
-                            case 'pending': reportButtonHtml = `<button class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="hourglass" class="w-3 h-3"></i> Pending</button>`; break;
-                            default: reportButtonHtml = `<button id="report-btn-${purchase.id}" onclick="showReportForm('${purchase.id}', '${purchase.mailType}', ${purchase.cost}, '${purchase.saleId}')" class="bg-orange-100 text-orange-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-orange-200 flex items-center gap-1"><i data-lucide="shield-alert" class="w-3 h-3"></i> Report</button>`;
-                        }
-
-                        let mailListHtml = '';
-                        if (purchase.type === 'bulk' && purchase.mails) {
-                             const mailsJson = JSON.stringify(purchase.mails);
-                             mailListHtml = `
-                                <div class="flex items-center gap-2 mt-2">
-                                     <button onclick='handleXlsxCopy(${mailsJson})' class="flex-1 bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-green-200 flex items-center justify-center gap-1"><i data-lucide="table-2" class="w-3 h-3"></i> XLSX Copy</button>
-                                     <button onclick='handleSendToTelegram(${mailsJson}, "${purchase.mailType}", this)' class="flex-1 bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-blue-200 flex items-center justify-center gap-1"><i data-lucide="send" class="w-3 h-3"></i> Send All</button>
+                            const mailsJson = JSON.stringify(purchase.mails);
+                            const individualMailHtml = purchase.mails.map((mail, index) => {
+                                const actionButtons = getIndividualMailActionsHTML(mail, purchase.mailType, purchase.stockKey);
+                                return `<div class="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                                    <span class="font-mono text-sm text-gray-800 truncate flex-1">${mail.email} | ${mail.password}</span>
+                                    ${actionButtons}
                                 </div>`;
-                        } else {
-                            const fullData = [purchase.mail, purchase.password, purchase.refreshToken, purchase.clientId].filter(Boolean).join('|');
-                            mailListHtml = `<div class="space-y-2 pt-2 border-t mt-3">
-                                <div class="flex items-center justify-between bg-gray-50 p-2 rounded-md"><span class="text-sm font-medium text-gray-500 mr-2">EMAIL:</span><span class="font-mono text-sm text-gray-800 truncate">${purchase.mail}</span><button onclick="copyToClipboard('${purchase.mail}', this)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button></div>
-                                <div class="flex items-center justify-between bg-gray-50 p-2 rounded-md"><span class="text-sm font-medium text-gray-500 mr-2">PASS:</span><span class="font-mono text-sm text-gray-800">${purchase.password || 'N/A'}</span><button onclick="copyToClipboard('${purchase.password || ''}', this)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button></div>
-                                <button onclick="copyToClipboard('${fullData}', this)" class="w-full bg-gray-100 text-gray-700 text-xs mt-1 px-3 py-1.5 rounded-md font-semibold hover:bg-gray-200 flex items-center justify-center gap-1"><i data-lucide="copy-plus" class="w-3 h-3"></i> FULL COPY</button>
+                            }).join('');
+
+                             return `<div class="card-bg p-4 rounded-xl space-y-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <h4 class="font-bold text-lg text-gray-800">${purchase.mailType} (Bulk)</h4>
+                                        <p class="text-xs text-gray-500">${date}</p>
+                                        <p class="text-sm font-semibold mt-1">Purchased: ${purchase.mails.length} mails</p>
+                                    </div>
+                                    <div class="flex flex-col items-end gap-2">
+                                        <button onclick='handleXlsxCopy(${mailsJson})' class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-green-200 flex items-center gap-1">
+                                            <i data-lucide="table-2" class="w-3 h-3"></i> XLSX Copy
+                                        </button>
+                                         <button onclick='handleSendToTelegram(${mailsJson}, "${purchase.mailType}", this)' class="bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-blue-200 flex items-center gap-1">
+                                            <i data-lucide="send" class="w-3 h-3"></i> Send All
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="space-y-2 pt-2 border-t max-h-48 overflow-y-auto">${individualMailHtml}</div>
                             </div>`;
                         }
                         
-                        return `<div class="card-bg p-4 rounded-xl">
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <h4 class="font-bold text-lg text-gray-800">${purchaseTitle}</h4>
-                                            <p class="text-xs text-gray-500">${date}</p>
-                                        </div>
-                                        ${reportButtonHtml}
-                                    </div>
-                                    ${mailListHtml}
-                                </div>`;
+                        const fullData = [purchase.mail, purchase.password, purchase.refreshToken, purchase.clientId].filter(Boolean).join('|');
+                        const countdownHtml = purchase.expirationHours ? `<div class="text-xs text-red-500 font-semibold text-right mt-1" data-purchase-id="${purchase.id}" data-purchased-at="${purchase.purchasedAt.toMillis()}" data-expires-in-hours="${purchase.expirationHours}">Expires in: --:--:--</div>` : '';
+                        
+                        const reportStatus = reportStatusMap.get(purchase.id);
+                        let reportButton;
+                        switch (reportStatus) {
+                            case 'approved': reportButton = `<button class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="check-circle" class="w-3 h-3"></i> Refunded</button>`; break;
+                            case 'rejected': reportButton = `<button class="bg-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="x-circle" class="w-3 h-3"></i> Rejected</button>`; break;
+                            case 'pending': reportButton = `<button class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="hourglass" class="w-3 h-3"></i> Pending</button>`; break;
+                            default: reportButton = `<button id="report-btn-${purchase.id}" onclick="showReportForm('${purchase.id}', '${purchase.mailType}', ${purchase.cost}, '${purchase.saleId}')" class="bg-orange-100 text-orange-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-orange-200 flex items-center gap-1"><i data-lucide="shield-alert" class="w-3 h-3"></i> Report</button>`;
+                        }
+                        
+                        return `<div class="card-bg p-4 rounded-xl space-y-3"><div class="flex justify-between items-start"><div><h4 class="font-bold text-lg text-gray-800">${purchase.mailType}</h4><p class="text-xs text-gray-500">${date}</p><p class="text-xs font-mono text-blue-600 mt-1">ID: ${purchase.saleId || 'N/A'}</p></div><div class="flex flex-col items-end gap-2">${reportButton}<button onclick="copyToClipboard('${fullData}', this)" class="bg-gray-100 text-gray-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-gray-200 flex items-center gap-1"><i data-lucide="copy-plus" class="w-3 h-3"></i> FULL COPY</button></div></div><div class="space-y-2 pt-2 border-t"><div class="flex items-center justify-between bg-gray-50 p-2 rounded-md"><span class="text-sm font-medium text-gray-500 mr-2">EMAIL:</span><span class="font-mono text-sm text-gray-800 truncate">${purchase.mail}</span><button onclick="copyToClipboard('${purchase.mail}', this)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button></div><div class="flex items-center justify-between bg-gray-50 p-2 rounded-md"><span class="text-sm font-medium text-gray-500 mr-2">PASS:</span><span class="font-mono text-sm text-gray-800">${purchase.password || 'N/A'}</span><button onclick="copyToClipboard('${purchase.password || ''}', this)" class="ml-2 p-1.5 rounded-md hover:bg-gray-200"><i data-lucide="copy" class="w-4 h-4 text-gray-600"></i></button></div></div>${countdownHtml}</div>`;
                     }).join('');
                     startCountdownTimers();
                 }
                 lucide.createIcons();
 
             } catch(e) {
+                 loginMailContainer.innerHTML = '<p class="text-center text-red-600">মেইল লোড করা যায়নি।</p>';
+                 otpMailContainer.innerHTML = '<p class="text-center text-red-600">মেইল লোড করা যায়নি।</p>';
                  historyListEl.innerHTML = '<p class="text-center text-red-600">হিস্টি লোড করা যায়নি।</p>';
                  console.error(e);
             }
@@ -2107,12 +2172,12 @@
             if (value > maxQty) input.value = maxQty;
         };
         
-        window.handleBulkBuy = async function(mailType, originalPrice, stockKey, maxQty) {
+        window.handleBulkBuy = async function(mailType, originalPrice, stockKey, availableStock) {
             const quantityInput = document.getElementById(`qty-${stockKey}`);
             const quantity = parseInt(quantityInput.value, 10);
             
-            if (isNaN(quantity) || quantity < 1 || quantity > maxQty) {
-                return showAlert(`Please enter a quantity between 1 and ${maxQty}.`);
+            if (isNaN(quantity) || quantity < 1 || quantity > availableStock) {
+                return showAlert(`Please enter a quantity between 1 and ${availableStock}.`);
             }
 
             const totalCost = quantity * originalPrice;
@@ -2134,11 +2199,13 @@
                     let effectiveBalance = currentBuyerData.balance;
                     
                     let teamLeaderRef = null;
+                    let currentLeaderData = null;
                     if (currentBuyerData.linkedBy) {
                         teamLeaderRef = doc(db, "users", currentBuyerData.linkedBy);
                         const leaderSnap = await transaction.get(teamLeaderRef);
                         if(leaderSnap.exists()) {
-                            effectiveBalance += leaderSnap.data().balance;
+                            currentLeaderData = leaderSnap.data();
+                            effectiveBalance += currentLeaderData.balance;
                         }
                     }
                     
@@ -2147,10 +2214,10 @@
                     }
                     
                     const mailQuery = query(collection(db, stockKey), where("isSold", "==", false), limit(quantity));
-                    const mailDocs = await transaction.get(mailQuery);
+                    const mailQuerySnapshot = await getDocs(mailQuery);
 
-                    if (mailDocs.docs.length < quantity) {
-                        throw new Error(`Not enough stock. Only ${mailDocs.docs.length} mails available.`);
+                    if (mailQuerySnapshot.docs.length < quantity) {
+                        throw new Error(`Not enough stock. Only ${mailQuerySnapshot.docs.length} mails available.`);
                     }
 
                     let costRemaining = totalCost;
@@ -2164,7 +2231,7 @@
                         transaction.update(teamLeaderRef, { [`teamSpending.${userData.tgChatId}`]: increment(costRemaining) });
                     }
 
-                    mailDocs.docs.forEach(mailDoc => {
+                    mailQuerySnapshot.docs.forEach(mailDoc => {
                         const mailData = mailDoc.data();
                         purchasedMailsData.push({
                             email: mailData.email,
@@ -2193,7 +2260,7 @@
                 updateUI();
 
             } catch (e) {
-                showAlert(`Purchase failed: ${e.message}`);
+                showAlert(`Bulk purchase failed: ${e.message}`);
                 console.error("Bulk Buy Error:", e);
                 loadMailStore();
             } finally {
@@ -2201,6 +2268,7 @@
             }
         };
         
+        // --- NEW: Function to load user's report history ---
         async function loadReportHistory() {
             const pendingList = document.getElementById('pending-reports-list');
             const approvedList = document.getElementById('approved-reports-list');
@@ -2262,9 +2330,7 @@
 
 
         function showBulkPurchaseSuccess(mails, mailType, stockKey) {
-            const purchaseMessage = `You have successfully purchased ${mails.length} x ${mailType} mail${mails.length > 1 ? 's' : ''}.`;
-            document.getElementById('bulk-purchase-summary').textContent = purchaseMessage;
-
+            document.getElementById('bulk-purchase-summary').textContent = `You have successfully purchased ${mails.length} ${mailType} mails.`;
             const listEl = document.getElementById('bulk-purchase-list');
             
             listEl.innerHTML = mails.map(mail => {
