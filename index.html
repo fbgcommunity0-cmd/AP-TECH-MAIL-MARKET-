@@ -1458,7 +1458,7 @@ Please review and process this request.
                         <div class="flex items-center gap-2">
                             <div class="flex-grow flex items-center border border-gray-300 rounded-lg">
                                 <button onclick="updateQty('${mail.stockKey}', -1, ${maxQty})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
-                                <input id="qty-${mail.stockKey}" type="number" min="1" max="${maxQty}" value="1" class="w-full text-center font-bold border-l border-r bg-white" oninput="validateQty(this, ${maxQty})">
+                                <input id="qty-${mail.stockKey}" type="text" inputmode="numeric" pattern="[0-9]*" min="1" max="${maxQty}" value="1" class="w-full text-center font-bold border-l border-r bg-white" oninput="validateQty(this, ${maxQty})">
                                 <button onclick="updateQty('${mail.stockKey}', 1, ${maxQty})" class="px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
                             </div>
                             <button class="btn-gradient w-auto px-6 py-2 rounded-lg text-md flex-shrink-0" ${maxQty < 1 ? 'disabled' : ''} onclick="handleBulkBuy('${mail.type}', ${mail.priceBdt}, '${mail.stockKey}', ${mail.stock})">Buy</button>
@@ -2219,33 +2219,49 @@ Please review and process this request.
         
         window.updateQty = (stockKey, delta, maxQty) => {
             const input = document.getElementById(`qty-${stockKey}`);
-            let currentValue = parseInt(input.value, 10);
+            let currentValue = parseInt(input.value, 10) || 0;
             currentValue += delta;
             if (currentValue < 1) currentValue = 1;
             if (currentValue > maxQty) currentValue = maxQty;
             input.value = currentValue;
         };
 
+        // --- MODIFIED FUNCTION ---
         window.validateQty = (input, maxQty) => {
-            let value = parseInt(input.value, 10);
-            if (isNaN(value) || value < 1) {
-                input.value = 1;
-                return;
-            };
-            if (value > maxQty) input.value = maxQty;
+            // Replace any character that is not a digit (this removes decimals, letters, etc.)
+            input.value = input.value.replace(/[^0-9]/g, '');
+
+            // If the field is not empty after cleaning, check against maxQty
+            if (input.value !== '') {
+                let value = parseInt(input.value, 10);
+                if (value > maxQty) {
+                    input.value = maxQty;
+                }
+                // Do not allow leading zeros like "05"
+                if (input.value.length > 1 && input.value.startsWith('0')) {
+                    input.value = value.toString();
+                }
+            }
         };
         
+        // --- MODIFIED FUNCTION ---
         window.handleBulkBuy = async function(mailType, originalPrice, stockKey, availableStock) {
             const quantityInput = document.getElementById(`qty-${stockKey}`);
             const quantity = parseInt(quantityInput.value, 10);
-            
-            if (isNaN(quantity) || quantity < 1 || quantity > availableStock) {
-                return showAlert(`Please enter a quantity between 1 and ${availableStock}.`);
+
+            // New, more robust validation
+            if (isNaN(quantity) || quantity < 1) {
+                quantityInput.value = '1'; // Reset to a valid number
+                return showAlert(`অনুগ্রহ করে একটি সঠিক পরিমাণ লিখুন।`);
+            }
+
+            if (quantity > availableStock) {
+                return showAlert(`দুঃখিত, স্টকে মাত্র ${availableStock} টি মেইল আছে।`);
             }
 
             const totalCost = quantity * originalPrice;
             
-            if (!confirm(`Buy ${quantity} x ${mailType} mails for a total of ৳${totalCost.toFixed(2)}?`)) return;
+            if (!confirm(`আপনি কি ${quantity} টি ${mailType} মেইল মোট ৳${totalCost.toFixed(2)} দিয়ে কিনতে চান?`)) return;
 
             document.getElementById('app-container').append(loader);
             loader.style.display = 'flex';
