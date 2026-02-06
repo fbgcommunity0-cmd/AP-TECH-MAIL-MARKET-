@@ -119,7 +119,7 @@
         .dot { display: inline-block; height: 8px; width: 8px; margin: 0 4px; background: #bbb; border-radius: 50%; cursor: pointer; transition: background 0.3s; }
         .dot.active { background: #007bff; }
 
-        /* --- UPDATED: Premium Loader --- */
+        /* Premium Loader */
         #loader {
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             gap: 1.5rem; transition: opacity 0.5s ease;
@@ -169,7 +169,7 @@
             transform-origin: center;
         }
 
-        /* --- NEW: Channel Join Gate --- */
+        /* Channel Join Gate */
         #channel-join-gate {
             display: none; /* Initially hidden */
             flex-direction: column;
@@ -184,7 +184,7 @@
         .review-card-new { background-color: #f9f9f9; border: 1px solid #eee; }
         .star-rating i { color: #facc15; }
 
-        /* UPDATED Spinner for Loading */
+        /* Spinner for Loading */
         .premium-loader-spinner {
             width: 56px;
             height: 56px;
@@ -203,7 +203,7 @@
             to { transform: rotate(1turn); }
         }
 
-        /* New Modal Close Button Style */
+        /* Modal Close Button Style */
         .modal-close-btn {
             position: absolute;
             top: 12px;
@@ -219,7 +219,7 @@
             background-color: #d1d5db;
         }
 
-        /* NEW: Notification Badge */
+        /* Notification Badge */
         .notification-badge {
             position: absolute;
             top: -5px;
@@ -237,7 +237,7 @@
             border: 2px solid white;
         }
 
-        /* --- NEW: Slide-Out Menu Styles --- */
+        /* Slide-Out Menu Styles */
         #menu-overlay {
             position: fixed;
             inset: 0;
@@ -296,7 +296,7 @@
             height: 32px;
         }
 
-        /* NEW: Mail Page View Switcher */
+        /* Mail Page View Switcher */
         .mail-view-switcher {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -320,7 +320,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        /* --- UPDATED & FIXED CSS for Mail Views --- */
+        /* CSS for Mail Views */
         #mail-views-container {
             position: relative;
             overflow: hidden;
@@ -333,11 +333,22 @@
             top: 0;
             left: 0;
         }
+
+        /* Empty State Styling */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #6b7280;
+        }
     </style>
 </head>
 <body class="max-w-md mx-auto">
 
-    <!-- =========== UPDATED PREMIUM LOADER =========== -->
+    <!-- Premium Loader -->
     <div id="loader" class="fixed inset-0 z-[100]">
         <div>
             <div class="loader-logo-wrapper">
@@ -354,7 +365,7 @@
         </div>
     </div>
     
-    <!-- =========== NEW: CHANNEL JOIN GATE =========== -->
+    <!-- Channel Join Gate -->
     <div id="channel-join-gate" class="fixed inset-0 bg-f8f8f8 z-[100]">
         <div class="logo-container">
             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600 mx-auto"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
@@ -390,7 +401,7 @@
         </div>
     </aside>
     <div id="app-container" class="min-h-screen flex-col main-page">
-        <!-- =========== HEADER (UPDATED) =========== -->
+        <!-- Header -->
         <header class="header flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="relative">
@@ -413,8 +424,6 @@
                 </button>
             </div>
         </header>
-        <!-- =========== END OF HEADER =========== -->
-
 
         <main class="flex-grow pb-20">
             <div id="home-page" class="space-y-6 sub-page">
@@ -440,7 +449,6 @@
                 </div>
             </div>
             
-            <!-- =========== [UPDATED] DEPOSIT PAGE =========== -->
             <div id="pay-page" class="p-4 space-y-6 sub-page">
                 <h2 class="text-2xl font-bold text-center text-accent-gradient">Deposit Center</h2>
 
@@ -511,10 +519,7 @@
                 </div>
                 <div class="mt-6"><h3 class="text-lg font-semibold mb-3">Payment History</h3><div id="payment-history-list" class="space-y-3"></div></div>
             </div>
-            <!-- =========== END OF DEPOSIT PAGE =========== -->
 
-
-            <!-- =========== UPDATED MAIL PAGE =========== -->
             <div id="mail-page" class="sub-page">
                 <div class="p-4 space-y-6">
                     <div class="mail-view-switcher">
@@ -539,10 +544,7 @@
                     </div>
                 </div>
             </div>
-            <!-- =========== END OF UPDATED MAIL PAGE =========== -->
 
-
-            <!-- =========== UPDATED UPDATES PAGE =========== -->
             <div id="updates-page" class="p-4 space-y-6 sub-page">
                 <h2 class="text-xl font-bold text-center text-gray-800">Latest Update</h2>
                 <div id="updates-content" class="space-y-4"></div>
@@ -552,8 +554,17 @@
                     <div id="reviews-list" class="space-y-4"></div>
                 </div>
             </div>
-            <!-- =========== END OF UPDATED UPDATES PAGE =========== -->
 
+            <!-- NEW: NOTIFICATION FULL-SCREEN PAGE -->
+            <div id="notification-page" class="p-4 space-y-4 sub-page">
+                <div class="relative flex items-center justify-center mb-4">
+                    <button onclick="navigateTo('home-page')" class="absolute left-0 p-2 rounded-full hover:bg-gray-100 transition-colors">
+                        <i data-lucide="arrow-left" class="w-6 h-6 text-gray-700"></i>
+                    </button>
+                    <h2 class="text-xl font-bold text-center text-gray-800">Notifications</h2>
+                </div>
+                <div id="notification-list" class="space-y-3"></div>
+            </div>
 
             <div id="tutorial-page" class="p-4 space-y-6 sub-page">
                 <h2 class="text-xl font-bold text-center text-gray-800">Tutorials</h2>
@@ -561,7 +572,6 @@
                 <div id="tutorial-list" class="space-y-5"></div>
             </div>
             
-            <!-- =========== [UPDATED] PROFILE PAGE =========== -->
             <div id="profile-page" class="p-4 space-y-6 sub-page">
                 <div class="card-bg p-6 rounded-2xl flex flex-col items-center text-center">
                     <div class="relative mb-4">
@@ -602,7 +612,6 @@
                 </div>
             </div>
             
-             <!-- =========== [NEW & UPDATED] REPORT HISTORY PAGE =========== -->
             <div id="report-history-page" class="p-4 space-y-6 sub-page">
                  <div class="relative flex items-center justify-center mb-4">
                     <button onclick="navigateTo('profile-page')" class="absolute left-0 p-2 rounded-full hover:bg-gray-100 transition-colors">
@@ -687,7 +696,6 @@
                 </div>
             </div>
 
-
             <div id="send-page" class="p-4 space-y-6 sub-page">
                 <div class="relative flex items-center justify-center mb-4">
                     <button onclick="navigateTo('features-page')" class="absolute left-0 p-2 rounded-full hover:bg-gray-100 transition-colors">
@@ -735,16 +743,6 @@
         </div>
     </div>
 
-    <div id="notification-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
-        <div class="card-bg rounded-2xl p-6 w-full max-w-sm space-y-4">
-            <h3 class="text-xl font-bold text-center text-accent-gradient mb-4">Notifications</h3>
-            <div id="notification-list" class="space-y-3 max-h-80 overflow-y-auto">
-                </div>
-            <button id="notification-ok-btn" class="w-full p-3 rounded-lg btn-gradient mt-4">Close</button>
-        </div>
-    </div>
-
-
     <div id="deposit-details-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
         <div class="card-bg rounded-2xl p-6 w-full max-w-sm space-y-4">
             <h3 class="text-xl font-bold text-center text-accent-gradient mb-4">How to Deposit</h3>
@@ -787,7 +785,6 @@
         </div>
     </div>
 
-    <!-- =========== NEW PREMIUM PURCHASE SUCCESS MODAL =========== -->
     <div id="purchase-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
         <div class="card-bg rounded-2xl p-6 w-full max-w-sm space-y-4 relative">
             <button id="close-purchase-success-modal" class="modal-close-btn">
@@ -819,8 +816,6 @@
         </div>
     </div>
 
-
-    <!-- [RE-DESIGNED] Bulk Purchase Success Modal -->
     <div id="bulk-purchase-success-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
         <div class="card-bg rounded-2xl p-6 w-full max-w-md space-y-4 relative">
             <button id="close-bulk-purchase-modal" class="modal-close-btn"><i data-lucide="x" class="w-5 h-5"></i></button>
@@ -846,9 +841,7 @@
             </div>
         </div>
     </div>
-
     
-    <!-- [UPDATED] Report Issue Modal -->
     <div id="report-issue-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[70] p-4 backdrop-blur-sm">
         <div class="card-bg rounded-2xl p-6 w-full max-w-sm space-y-4 relative">
             <button onclick="document.getElementById('report-issue-modal').classList.add('hidden')" class="modal-close-btn">
@@ -890,9 +883,9 @@
         const BOT_TOKEN = "8185055021:AAECHvC3MvXbWWufxmg_H3mXIysrLQRzoNs";
         const OFFICIAL_CHANNELS = ['@aptechonlineincome', '@gmailmarketter'];
         
-        // --- UPDATED DUAL FIREBASE CONFIG ---
+        // --- DUAL FIREBASE CONFIG ---
 
-        // Config 1: For User Balance, Deposits, and Profiles
+        // Config 1: For User Balance, Deposits, Profiles, Support, Notifications, Reviews
         const firebaseConfigUser = {
           apiKey: "AIzaSyClz7XBgYHuiF70711CSb6DzDULzN4Okc8",
           authDomain: "tech-mail-market.firebaseapp.com",
@@ -922,7 +915,7 @@
         const mailApp = initializeApp(firebaseConfigMail, "mailApp");
 
         // --- Get Firestore instances for each app ---
-        const dbUser = getFirestore(userApp); // Database for user balances, deposits, etc.
+        const dbUser = getFirestore(userApp); // Database for user data, notifications, support, reviews
         const dbMail = getFirestore(mailApp); // Database for mails, history, configs, etc.
 
         let currentUserTg = null;
@@ -936,6 +929,7 @@
         const channelGate = document.getElementById('channel-join-gate');
 
         const getLoadingHTML = () => `<div class="loading-container"><div class="premium-loader-spinner"></div></div>`;
+        const getEmptyStateHTML = (icon, title, message) => `<div class="empty-state"><i data-lucide="${icon}" class="w-16 h-16 text-gray-400 mx-auto mb-4"></i><h3 class="text-xl font-bold text-gray-700">${title}</h3><p class="text-gray-500 mt-2">${message}</p></div>`;
 
         function getTodayDateString() {
             const today = new Date();
@@ -1015,14 +1009,12 @@
             return results.every(isMember => isMember);
         }
 
-
         async function initUserSession() {
             if (!currentUserTg) {
                 showAlert("Telegram user data is missing. Cannot proceed.");
                 return;
             }
             const tgChatId = String(currentUserTg.id);
-            // IMPORTANT: User data is now fetched from dbUser
             const userRef = doc(dbUser, "users", tgChatId);
             let userSnap = await getDoc(userRef);
             const todayStr = getTodayDateString();
@@ -1086,7 +1078,6 @@
         }
 
         async function fetchAppConfig() {
-            // IMPORTANT: App configuration is fetched from dbMail
             const configRef = doc(dbMail, "config", "main");
             const configSnap = await getDoc(configRef);
             if (configSnap.exists()) {
@@ -1154,6 +1145,7 @@
                 'pay-page': loadPaymentHistory,
                 'mail-page': loadMailStore,
                 'updates-page': () => { loadUpdates(); loadReviews(); },
+                'notification-page': loadNotificationsPage,
                 'admin-page': () => { populateAdminMailTypes(); loadReplaceRequests(); },
                 'profile-page': loadProfilePage,
                 'report-history-page': () => { lucide.createIcons(); },
@@ -1177,8 +1169,7 @@
         function setupEventListeners() {
             document.querySelectorAll('.nav-link-premium[data-page]').forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigateTo(link.dataset.page); }));
             document.getElementById('header-deposit-btn').addEventListener('click', () => navigateTo('pay-page'));
-            document.getElementById('notification-btn').addEventListener('click', showNotifications);
-            document.getElementById('notification-ok-btn').addEventListener('click', hideNotifications);
+            document.getElementById('notification-btn').addEventListener('click', () => navigateTo('notification-page'));
             document.getElementById('deposit-btn').addEventListener('click', handleDepositRequest);
             document.getElementById('home-deposit-btn').addEventListener('click', () => navigateTo('pay-page'));
             document.getElementById('add-mails-btn').addEventListener('click', handleAddMails);
@@ -1252,8 +1243,8 @@
         }
 
         function listenForNotifications() {
-            // IMPORTANT: Notifications are fetched from dbMail
-            const q = query(collection(dbMail, "notifications"), orderBy("createdAt", "desc"));
+            // UPDATED: Notifications are fetched from dbUser
+            const q = query(collection(dbUser, "notifications"), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
                 const filteredDocs = snapshot.docs.filter(doc => {
                     const data = doc.data();
@@ -1261,7 +1252,6 @@
                 });
 
                 let unreadCount = 0;
-                // Note: userData (with lastSeen) comes from dbUser, which is correct.
                 const lastSeen = userData.lastSeenNotification ? userData.lastSeenNotification.toMillis() : 0;
                 
                 filteredDocs.forEach(doc => {
@@ -1281,14 +1271,12 @@
             });
         }
 
-        async function showNotifications() {
-            const modal = document.getElementById('notification-modal');
+        async function loadNotificationsPage() {
             const listEl = document.getElementById('notification-list');
             listEl.innerHTML = getLoadingHTML();
-            modal.classList.remove('hidden');
             
-            // IMPORTANT: Notifications are fetched from dbMail
-            const q = query(collection(dbMail, "notifications"), orderBy("createdAt", "desc"), limit(20));
+            // UPDATED: Notifications are fetched from dbUser
+            const q = query(collection(dbUser, "notifications"), orderBy("createdAt", "desc"), limit(20));
             const snapshot = await getDocs(q);
 
             const filteredDocs = snapshot.docs.filter(doc => {
@@ -1297,24 +1285,21 @@
             });
 
             if (filteredDocs.length === 0) {
-                listEl.innerHTML = '<p class="text-center text-gray-500">No notifications yet.</p>';
+                listEl.innerHTML = getEmptyStateHTML('bell-off', 'No Notifications', 'You have no new notifications at the moment.');
             } else {
-                listEl.innerHTML = filteredDocs.slice(0, 10).map(doc => {
+                listEl.innerHTML = filteredDocs.map(doc => {
                     const item = doc.data();
                     const date = item.createdAt.toDate().toLocaleString('en-GB');
-                    return `<div class="p-3 bg-gray-50 rounded-lg">
+                    return `<div class="p-4 bg-white rounded-lg border shadow-sm">
                         <p class="font-bold text-gray-800">${item.title}</p>
-                        <p class="text-sm text-gray-600">${item.message}</p>
-                        <p class="text-xs text-gray-400 text-right mt-2">${date}</p>
+                        <p class="text-sm text-gray-600 mt-1">${item.message}</p>
+                        <p class="text-xs text-gray-400 text-right mt-3">${date}</p>
                     </div>`;
                 }).join('');
             }
-        }
+            lucide.createIcons();
 
-
-        async function hideNotifications() {
-            document.getElementById('notification-modal').classList.add('hidden');
-            // IMPORTANT: User's notification status is updated in dbUser
+            // Mark notifications as read
             const userRef = doc(dbUser, "users", userData.tgChatId);
             const newTimestamp = Timestamp.now();
             await updateDoc(userRef, { lastSeenNotification: newTimestamp });
@@ -1357,7 +1342,6 @@
             loader.style.display = 'flex';
 
             try {
-                // IMPORTANT: Deposit requests are stored in dbUser
                 const depositQuery = query(collection(dbUser, "deposits"), where("transactionId", "==", transactionId), where("status", "in", ["pending", "approved"]));
                 const querySnapshot = await getDocs(depositQuery);
                 if (!querySnapshot.empty) {
@@ -1406,10 +1390,13 @@ Please review and process this request.
             const historyList = document.getElementById('payment-history-list');
             historyList.innerHTML = getLoadingHTML();
             try {
-                // IMPORTANT: Payment history is fetched from dbUser
                 const q = query(collection(dbUser, "deposits"), where("userId", "==", userData.tgChatId), orderBy("requestedAt", "desc"));
                 const snapshot = await getDocs(q);
-                if (snapshot.empty) return historyList.innerHTML = '<p class="text-gray-600 text-center">কোনো রেকর্ড পাওয়া যায়নি।</p>';
+                if (snapshot.empty) {
+                    historyList.innerHTML = getEmptyStateHTML('history', 'No Payment History', 'You have not made any deposits yet.');
+                    lucide.createIcons();
+                    return;
+                }
 
                 historyList.innerHTML = snapshot.docs.map(doc => {
                     const item = doc.data();
@@ -1428,7 +1415,6 @@ Please review and process this request.
 
         async function getStockCount(collectionName) {
             try {
-                // IMPORTANT: Mail stock count comes from dbMail
                 const q = query(collection(dbMail, collectionName), where("isSold", "==", false));
                 const snapshot = await getCountFromServer(q);
                 return snapshot.data().count;
@@ -1528,7 +1514,6 @@ Please review and process this request.
             historyListEl.innerHTML = getLoadingHTML();
             
             try {
-                // IMPORTANT: Fetch latest user data and balance from dbUser
                 const userSnap = await getDoc(doc(dbUser, "users", userData.tgChatId));
                 userData = userSnap.data();
                 updateUI();
@@ -1539,7 +1524,6 @@ Please review and process this request.
                     if (teamLeaderSnap.exists()) effectiveBalance += teamLeaderSnap.data().balance;
                 }
                 
-                // Mail configurations are fetched earlier from dbMail via fetchAppConfig()
                 const allMails = appConfig.mails || [];
                 const loginMails = allMails.filter(m => m.category === 'login' || !m.category);
                 const otpMails = allMails.filter(m => m.category === 'otp');
@@ -1551,7 +1535,6 @@ Please review and process this request.
                 
                 switchMailView('login');
                 
-                // IMPORTANT: Purchase history and reports come from dbMail
                 const twentyFourHoursAgo = Timestamp.fromDate(new Date(Date.now() - 24 * 60 * 60 * 1000));
                 const q = query(collection(dbMail, "mail_purchases"), where("userId", "==", userData.tgChatId), where("purchasedAt", ">=", twentyFourHoursAgo), orderBy("purchasedAt", "desc"));
                 const querySnapshot = await getDocs(q);
@@ -1581,11 +1564,12 @@ Please review and process this request.
                 });
 
                 if(activePurchases.length === 0) {
-                    historyListEl.innerHTML = '<p class="text-center text-gray-600">আপনার কোনো সক্রিয় কেনা মেইল নেই।</p>';
+                     historyListEl.innerHTML = getEmptyStateHTML('shopping-cart', 'No Recent Purchases', 'Your purchases from the last 24 hours will appear here.');
                 } else {
                     historyListEl.innerHTML = activePurchases.map(purchase => {
                         const date = purchase.purchasedAt.toDate().toLocaleString();
-                        
+                        const reportStatus = reportStatusMap.get(purchase.id);
+
                         if (purchase.type === 'bulk' && purchase.mails) {
                             const mailsJson = JSON.stringify(purchase.mails);
                             const individualMailHtml = purchase.mails.map((mail, index) => {
@@ -1595,6 +1579,14 @@ Please review and process this request.
                                     ${actionButtons}
                                 </div>`;
                             }).join('');
+                            
+                            let bulkReportButton;
+                            switch (reportStatus) {
+                                case 'approved': bulkReportButton = `<button class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="check-circle" class="w-3 h-3"></i> Refunded</button>`; break;
+                                case 'rejected': bulkReportButton = `<button class="bg-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="x-circle" class="w-3 h-3"></i> Rejected</button>`; break;
+                                case 'pending': bulkReportButton = `<button class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="hourglass" class="w-3 h-3"></i> Pending</button>`; break;
+                                default: bulkReportButton = `<button onclick="showBulkReportForm('${purchase.id}', '${purchase.mailType}', ${purchase.cost}, '${purchase.saleId || purchase.id}')" class="bg-orange-100 text-orange-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-orange-200 flex items-center gap-1"><i data-lucide="shield-alert" class="w-3 h-3"></i> Report Issue</button>`;
+                            }
 
                              return `<div class="card-bg p-4 rounded-xl space-y-3">
                                 <div class="flex justify-between items-start">
@@ -1610,6 +1602,7 @@ Please review and process this request.
                                          <button onclick='handleSendToTelegram(${mailsJson}, "${purchase.mailType}", this)' class="bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-md font-semibold hover:bg-blue-200 flex items-center gap-1">
                                             <i data-lucide="send" class="w-3 h-3"></i> Send All
                                         </button>
+                                        ${bulkReportButton}
                                     </div>
                                 </div>
                                 <div class="space-y-2 pt-2 border-t max-h-48 overflow-y-auto">${individualMailHtml}</div>
@@ -1619,7 +1612,6 @@ Please review and process this request.
                         const fullData = [purchase.mail, purchase.password, purchase.refreshToken, purchase.clientId].filter(Boolean).join('|');
                         const countdownHtml = purchase.expirationHours ? `<div class="text-xs text-red-500 font-semibold text-right mt-1" data-purchase-id="${purchase.id}" data-purchased-at="${purchase.purchasedAt.toMillis()}" data-expires-in-hours="${purchase.expirationHours}">Expires in: --:--:--</div>` : '';
                         
-                        const reportStatus = reportStatusMap.get(purchase.id);
                         let reportButton;
                         switch (reportStatus) {
                             case 'approved': reportButton = `<button class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-md font-semibold flex items-center gap-1" disabled><i data-lucide="check-circle" class="w-3 h-3"></i> Refunded</button>`; break;
@@ -1671,7 +1663,6 @@ Please review and process this request.
             document.getElementById('app-container').append(loader);
             loader.style.display = 'flex';
             try {
-                // IMPORTANT: Purchase history is fetched from dbMail
                 const q = query(collection(dbMail, "mail_purchases"), where("userId", "==", userData.tgChatId), orderBy("purchasedAt", "desc"));
                 const querySnapshot = await getDocs(q);
                 if (querySnapshot.empty) {
@@ -1704,7 +1695,6 @@ Please review and process this request.
             loader.style.display = 'flex';
             try {
                 const tenHoursAgo = Timestamp.fromDate(new Date(Date.now() - 10 * 60 * 60 * 1000));
-                // IMPORTANT: Purchase history is fetched from dbMail
                 const q = query(collection(dbMail, "mail_purchases"), where("userId", "==", userData.tgChatId), where("purchasedAt", ">=", tenHoursAgo), orderBy("purchasedAt", "desc"));
                 const querySnapshot = await getDocs(q);
                 if (querySnapshot.empty) {
@@ -1774,10 +1764,13 @@ Please review and process this request.
             const updatesContainer = document.getElementById('updates-content');
             updatesContainer.innerHTML = getLoadingHTML();
             try {
-                // IMPORTANT: Updates are fetched from dbMail
                 const q = query(collection(dbMail, "updates"), orderBy("createdAt", "desc"), limit(1));
                 const snapshot = await getDocs(q);
-                if (snapshot.empty) return updatesContainer.innerHTML = `<div class="card-bg p-6 rounded-2xl text-center"><h3 class="font-bold text-xl text-gray-800">No new updates right now!</h3><p class="text-gray-600 mt-2">Check back later.</p></div>`;
+                if (snapshot.empty) {
+                    updatesContainer.innerHTML = getEmptyStateHTML('megaphone-off', 'No Updates', 'There are no new updates right now. Check back later!');
+                    lucide.createIcons();
+                    return;
+                }
 
                 const updateDoc = snapshot.docs[0];
                 const update = { id: updateDoc.id, ...updateDoc.data() };
@@ -1810,7 +1803,6 @@ Please review and process this request.
             document.getElementById('app-container').append(loader);
             loader.style.display = 'flex';
             try {
-                // IMPORTANT: New mails are added to dbMail
                 const batch = writeBatch(dbMail);
                 let addedCount = 0;
                 lines.forEach(line => {
@@ -1838,7 +1830,7 @@ Please review and process this request.
             document.getElementById('custom-alert').classList.remove('hidden');
         }
 
-        window.copyToClipboard = function(text, element) {
+        window.copyToClipboard = function(text, element, successMessage = 'Copied!') {
             if (!text || typeof text !== 'string') return;
             navigator.clipboard.writeText(text.trim()).then(() => {
                 if (element) {
@@ -1849,6 +1841,8 @@ Please review and process this request.
                         element.innerHTML = originalContent; 
                         lucide.createIcons(); 
                     }, 1500);
+                } else {
+                    showAlert(successMessage);
                 }
             }).catch(err => {
                 console.error('Copy failed:', err);
@@ -1880,7 +1874,6 @@ Please review and process this request.
             document.getElementById('total-receive-display').textContent = `...`;
             document.getElementById('total-send-display').textContent = `...`;
             try {
-                // IMPORTANT: Transfer history is fetched from dbUser
                 const receivedQuery = query(collection(dbUser, "transfers"), where("toId", "==", userData.tgChatId));
                 const sentQuery = query(collection(dbUser, "transfers"), where("fromId", "==", userData.tgChatId));
                 const [receivedSnapshot, sentSnapshot] = await Promise.all([getDocs(receivedQuery), getDocs(sentQuery)]);
@@ -1898,7 +1891,6 @@ Please review and process this request.
             const historyList = document.getElementById('transfer-history-list');
             historyList.innerHTML = getLoadingHTML();
             try {
-                // IMPORTANT: Transfer history is fetched from dbUser
                 const sentQuery = query(collection(dbUser, "transfers"), where("fromId", "==", userData.tgChatId));
                 const receivedQuery = query(collection(dbUser, "transfers"), where("toId", "==", userData.tgChatId));
                 const [sentDocs, receivedDocs] = await Promise.all([getDocs(sentQuery), getDocs(receivedQuery)]);
@@ -1907,7 +1899,11 @@ Please review and process this request.
                     .map(doc => doc.data())
                     .sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis());
 
-                if (transactions.length === 0) return historyList.innerHTML = '<p class="text-gray-600 text-center">No transfer history.</p>';
+                if (transactions.length === 0) {
+                     historyList.innerHTML = getEmptyStateHTML('arrow-left-right', 'No Transfers', 'Your balance transfer history will appear here.');
+                     lucide.createIcons();
+                     return;
+                }
                 historyList.innerHTML = transactions.map(item => {
                     const isSent = item.fromId === userData.tgChatId;
                     const date = item.timestamp.toDate().toLocaleString('en-GB');
@@ -1945,7 +1941,6 @@ Please review and process this request.
             document.getElementById('app-container').append(loader);
             loader.style.display = 'flex';
             try {
-                // IMPORTANT: Balance transfer logic uses dbUser
                 await runTransaction(dbUser, async (transaction) => {
                     const senderRef = doc(dbUser, "users", userData.tgChatId);
                     const recipientRef = doc(dbUser, "users", recipientId);
@@ -1977,7 +1972,6 @@ Please review and process this request.
             const searchResultEl = document.getElementById('friend-search-result');
             searchResultEl.innerHTML = getLoadingHTML();
             
-            // IMPORTANT: Friend data is fetched from dbUser
             const friendSnap = await getDoc(doc(dbUser, "users", friendId));
             if (!friendSnap.exists()) return searchResultEl.innerHTML = `<p class="text-red-500 text-center mt-2">User not found.</p>`;
 
@@ -1992,7 +1986,6 @@ Please review and process this request.
         window.confirmLinkFriend = async function(friendId) {
             document.getElementById('friend-search-result').innerHTML = getLoadingHTML();
             try {
-                // IMPORTANT: Linking friends updates documents in dbUser
                 await updateDoc(doc(dbUser, "users", userData.tgChatId), { linkedUsers: arrayUnion(friendId) });
                 await updateDoc(doc(dbUser, "users", friendId), { linkedBy: userData.tgChatId });
                 showAlert(`Successfully linked!`);
@@ -2008,13 +2001,16 @@ Please review and process this request.
             const listEl = document.getElementById('linked-friends-list');
             listEl.innerHTML = getLoadingHTML();
             
-            // IMPORTANT: User and friend data is fetched from dbUser
             const userSnap = await getDoc(doc(dbUser, "users", userData.tgChatId));
             if (!userSnap.exists()) return listEl.innerHTML = '<p class="text-center text-red-500">Could not load your data.</p>';
             userData = userSnap.data();
             
             const linkedIds = userData.linkedUsers || [];
-            if (linkedIds.length === 0) return listEl.innerHTML = '<p class="text-center text-gray-500">You have no team members yet.</p>';
+            if (linkedIds.length === 0) {
+                 listEl.innerHTML = getEmptyStateHTML('users-2', 'No Team Members', 'Add your friends using their chat ID to build your team.');
+                 lucide.createIcons();
+                 return;
+            }
 
             const friendDocs = await Promise.all(linkedIds.map(id => getDoc(doc(dbUser, "users", id))));
             listEl.innerHTML = friendDocs.map(friendDoc => {
@@ -2034,7 +2030,6 @@ Please review and process this request.
             document.getElementById('app-container').append(loader);
             loader.style.display = 'flex';
             try {
-                // IMPORTANT: Unlinking updates documents in dbUser
                 await updateDoc(doc(dbUser, "users", userData.tgChatId), { linkedUsers: arrayRemove(friendId) });
                 await updateDoc(doc(dbUser, "users", friendId), { linkedBy: null });
                 showAlert("Friend has been unlinked.");
@@ -2047,9 +2042,12 @@ Please review and process this request.
             const tutorialListEl = document.getElementById('tutorial-list');
             tutorialListEl.innerHTML = getLoadingHTML();
             try {
-                // IMPORTANT: Tutorials are fetched from dbMail
                 const snapshot = await getDocs(query(collection(dbMail, "tutorials"), orderBy("order")));
-                if (snapshot.empty) return tutorialListEl.innerHTML = '<p class="text-center text-gray-600">No tutorials available.</p>';
+                if (snapshot.empty) {
+                     tutorialListEl.innerHTML = getEmptyStateHTML('video-off', 'No Tutorials', 'Tutorials are not available at the moment.');
+                     lucide.createIcons();
+                     return;
+                }
                 tutorialListEl.innerHTML = snapshot.docs.map(doc => {
                     const t = doc.data();
                     const banner = t.bannerImageUrl || 'https://i.postimg.cc/zBp8rCX9/Yellow-Orange-Modern-Marketing-Courses-You-Tube-Thumbnail-20250910-185659-0000.png';
@@ -2063,9 +2061,13 @@ Please review and process this request.
             const reviewListEl = document.getElementById('reviews-list');
             reviewListEl.innerHTML = getLoadingHTML();
             try {
-                // IMPORTANT: Reviews are fetched from dbMail
-                const snapshot = await getDocs(query(collection(dbMail, "reviews"), orderBy("createdAt", "desc"), limit(5)));
-                if (snapshot.empty) return reviewListEl.innerHTML = '<p class="text-center text-gray-600">No reviews yet.</p>';
+                // UPDATED: Reviews are fetched from dbUser
+                const snapshot = await getDocs(query(collection(dbUser, "reviews"), orderBy("createdAt", "desc"), limit(5)));
+                if (snapshot.empty) {
+                     reviewListEl.innerHTML = getEmptyStateHTML('message-square-dashed', 'No Reviews Yet', 'Be the first one to leave a review!');
+                     lucide.createIcons();
+                     return;
+                }
 
                 reviewListEl.innerHTML = snapshot.docs.map(doc => {
                     const review = doc.data();
@@ -2081,8 +2083,8 @@ Please review and process this request.
             const supportContainer = document.getElementById('support-channels-list');
             supportContainer.innerHTML = getLoadingHTML();
             try {
-                // IMPORTANT: Support channels are fetched from dbMail
-                const snapshot = await getDocs(query(collection(dbMail, "support_channels"), orderBy("order", "asc")));
+                // UPDATED: Support channels are fetched from dbUser
+                const snapshot = await getDocs(query(collection(dbUser, "support_channels"), orderBy("order", "asc")));
                 if (snapshot.empty) return supportContainer.innerHTML = '<p class="p-4 text-center text-gray-600">No support channels available.</p>';
                 supportContainer.innerHTML = snapshot.docs.map(doc => {
                     const channel = doc.data();
@@ -2092,9 +2094,19 @@ Please review and process this request.
         }
 
         function handleFeaturesClick() { navigateTo('features-page'); }
-
+        
         window.showReportForm = (purchaseId, mailType, cost, saleId) => {
             document.getElementById('report-modal-mail-type').textContent = `${mailType} (ID: ${saleId})`;
+            document.getElementById('report-purchase-id').value = purchaseId;
+            document.getElementById('report-purchase-cost').value = cost;
+            document.getElementById('report-purchase-saleId').value = saleId;
+            document.getElementById('report-issue-form').reset();
+            document.getElementById('report-issue-modal').classList.remove('hidden');
+        }
+
+        // NEW: Function to show report form for bulk purchases
+        window.showBulkReportForm = (purchaseId, mailType, cost, saleId) => {
+            document.getElementById('report-modal-mail-type').textContent = `${mailType} (Bulk Purchase ID: ${saleId})`;
             document.getElementById('report-purchase-id').value = purchaseId;
             document.getElementById('report-purchase-cost').value = cost;
             document.getElementById('report-purchase-saleId').value = saleId;
@@ -2116,11 +2128,10 @@ Please review and process this request.
             document.getElementById('app-container').append(loader);
             loader.style.display = 'flex';
             try {
-                 // IMPORTANT: Reports are stored in dbMail
                  const requestQuery = query(collection(dbMail, "replace_requests"), where("purchaseId", "==", purchaseId), limit(1));
                  const existingRequest = await getDocs(requestQuery);
                  if (!existingRequest.empty) {
-                     throw new Error("এই মেইলটির জন্য ইতিমধ্যে একটি অভিযোগ জমা দেওয়া হয়েছে।");
+                     throw new Error("এই কেনাকাটার জন্য ইতিমধ্যে একটি অভিযোগ জমা দেওয়া হয়েছে।");
                  }
 
                 await addDoc(collection(dbMail, "replace_requests"), {
@@ -2149,10 +2160,13 @@ Please review and process this request.
             const listEl = document.getElementById('replace-requests-list');
             listEl.innerHTML = getLoadingHTML();
             try {
-                // IMPORTANT: Replace requests are fetched from dbMail
                 const q = query(collection(dbMail, "replace_requests"), where("status", "==", "pending"), orderBy("requestedAt", "desc"));
                 const snapshot = await getDocs(q);
-                if (snapshot.empty) return listEl.innerHTML = '<p class="text-center text-gray-500">No pending requests.</p>';
+                if (snapshot.empty) {
+                     listEl.innerHTML = getEmptyStateHTML('inbox', 'All Clear!', 'There are no pending replace requests.');
+                     lucide.createIcons();
+                     return;
+                }
 
                 listEl.innerHTML = snapshot.docs.map(doc => {
                     const req = { id: doc.id, ...doc.data() };
@@ -2181,18 +2195,15 @@ Please review and process this request.
             document.getElementById('app-container').append(loader);
             loader.style.display = 'flex';
             try {
-                // This is a dual-database operation, not transactional
                 const requestRef = doc(dbMail, "replace_requests", requestId);
                 const userRef = doc(dbUser, "users", userId);
                 const purchaseRef = doc(dbMail, "mail_purchases", purchaseId);
                 
-                // Step 1: Update mail-related data in dbMail
                 const mailBatch = writeBatch(dbMail);
                 mailBatch.update(requestRef, { status: 'approved', resolvedAt: serverTimestamp() });
                 mailBatch.update(purchaseRef, { isRefunded: true });
                 await mailBatch.commit();
                 
-                // Step 2: Update user balance in dbUser
                 await updateDoc(userRef, { balance: increment(cost) });
 
                 showAlert("Request approved and balance refunded successfully.");
@@ -2210,11 +2221,9 @@ Please review and process this request.
             document.getElementById('app-container').append(loader);
             loader.style.display = 'flex';
             try {
-                 // This is a dual-database operation
                 const requestRef = doc(dbMail, "replace_requests", requestId);
                 const userRef = doc(dbUser, "users", userId);
 
-                // Step 1: Update user penalty data in dbUser
                 await runTransaction(dbUser, async (transaction) => {
                     const userSnap = await transaction.get(userRef);
                     if (!userSnap.exists()) throw new Error("User not found");
@@ -2239,7 +2248,6 @@ Please review and process this request.
                     transaction.update(userRef, updates);
                 });
                 
-                // Step 2: Update request status in dbMail
                 await updateDoc(requestRef, { status: 'rejected', resolvedAt: serverTimestamp() });
 
                 showAlert("Request has been rejected. User's rejection count updated.");
@@ -2296,10 +2304,7 @@ Please review and process this request.
             loader.style.display = 'flex';
             
             let purchasedMailsData = [];
-            // This is a complex operation across two databases, so it cannot be a single atomic transaction.
-            // We will deduct balance first, and if that succeeds, process the mails.
             
-            // --- Phase 1: Deduct Balance from dbUser ---
             const buyerRef = doc(dbUser, "users", userData.tgChatId);
             const userSnap = await getDoc(buyerRef);
             let currentBuyerData = userSnap.data();
@@ -2321,7 +2326,6 @@ Please review and process this request.
             }
 
             try {
-                // --- Phase 2: Get available mails from dbMail ---
                 const mailQuery = query(collection(dbMail, stockKey), where("isSold", "==", false), limit(quantity));
                 const mailQuerySnapshot = await getDocs(mailQuery);
 
@@ -2329,7 +2333,6 @@ Please review and process this request.
                     throw new Error(`Not enough stock. Only ${mailQuerySnapshot.docs.length} mails available.`);
                 }
                 
-                // --- Phase 3: Update balances in dbUser (Transactionally) ---
                 await runTransaction(dbUser, async (transaction) => {
                     const freshBuyerSnap = await transaction.get(buyerRef);
                     let costRemaining = totalCost;
@@ -2347,7 +2350,6 @@ Please review and process this request.
                     }
                 });
 
-                // --- Phase 4: Mark mails as sold and log the purchase in dbMail ---
                 const mailBatch = writeBatch(dbMail);
                 mailQuerySnapshot.docs.forEach(mailDoc => {
                     const mailData = mailDoc.data();
@@ -2366,15 +2368,12 @@ Please review and process this request.
                 
                 await mailBatch.commit();
 
-                // --- Success ---
                 showBulkPurchaseSuccess(purchasedMailsData, mailType, stockKey);
-                loadMailStore(); // This will re-fetch user data from dbUser internally
+                loadMailStore();
                 
             } catch (e) {
                 showAlert(`Bulk purchase failed: ${e.message}. If balance was deducted, contact support immediately.`);
                 console.error("Bulk Buy Error:", e);
-                // NOTE: A more robust system would have a rollback or a "pending" state here,
-                // but for this implementation, we alert the user.
                 loadMailStore();
             } finally {
                 loader.style.display = 'none';
@@ -2384,7 +2383,6 @@ Please review and process this request.
         async function loadReportHistory() {
             // "Coming Soon" page doesn't need to load data.
         }
-
 
         function showBulkPurchaseSuccess(mails, mailType, stockKey) {
             document.getElementById('bulk-purchase-summary').textContent = `You have successfully purchased ${mails.length} ${mailType} mails.`;
